@@ -18,35 +18,48 @@ if FLAG_RUN_HMM
     zeroVelocityIndex = find(stateEstimated==haltState);
     save WalkingMemoryStorage_shimmer6_WinKmeans13
 else
-    load WalkingMemoryStorage_shimmer6_WinKmeans13
+    load WalkingMemoryStorage_shimmer5_WinKmeans13
 end
 %% draw HMM result
-tSpan = 18000:19000;
+tSpan = 16000:20000;
 figure(1)
 subplot(211)
 plot(tSpan,data(tSpan,para.selectedSignal),'r')
+title('Gyro X')
 subplot(212)
 plot(tSpan,stateEstimated(tSpan),'b')
+title('States of Steps')
 %% parameter setup for sensor kinematics
 ParaSetupSensorKinematics;
 %% data processing, calculate quaternion, motion accel/velocity/displacement
 positionInitial = [0;0;0];
 velocityInitial = [0;0;0];
 [quatSeries,motionAccelSeries,motionVelocitySeries,motionPositionSeries,dataStaticFiltered,dataMotionFiltered] = SensorKinematics(sensorStatic,sensorMotion,positionInitial,velocityInitial,para,methodSet,otherValues);
-%% 
-accel = zeros(size(motionAccelSeries));
-for i=1:size(accel,1)
-    accel(i,:) = CoordinateTransfer(motionAccelSeries(i,:).',quatSeries(i,:).','r2b');
+%print some information
+belowZero = zeros(1,3);
+aboveZero = zeros(1,3);
+for i=1:3
+    temp = motionAccelSeries(:,i);
+    belowZero(i) = sum(temp(temp<=0));
+    aboveZero(i) = sum(temp(temp>0));
 end
+belowZero
+aboveZero
+%% draw sensor kinematics result
+figure(2)
+plot(motionPositionSeries)
+legend('Displacement X','Displacement Y','Displacement Z');
+title('Displacement')
 
-index = ones(size(motionAccelSeries,1),1);
-index(zeroVelocityIndex) = 0;
-temp = motionAccelSeries(:,2);
-temp = temp .* index;
-sum(temp(temp>=0))
-sum(temp(temp<0))
-
-temp = accel(:,3);
-temp = temp .* index;
-sum(temp(temp>=0))
-sum(temp(temp<0))
+figure(3)
+tSpan = 10000:19000;
+subplot(311)
+area(tSpan,motionAccelSeries(tSpan,1))
+title('Accel X in Global Frame')
+subplot(312)
+plot(tSpan,quatSeries(tSpan,2))
+title('Quaternion q1')
+subplot(313)
+temp = sqrt(sum(footMotion.Magnetic.^2,2));
+plot(tSpan,temp(tSpan))
+title('Magnetic Module')
