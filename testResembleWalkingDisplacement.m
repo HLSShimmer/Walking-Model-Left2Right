@@ -3,6 +3,7 @@
 %%% and HMM to detect zero-velocity, then make the integration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
+%test push github steph
 %% flag of running HMM or load memory from previous time
 FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
