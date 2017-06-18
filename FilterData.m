@@ -4,13 +4,13 @@ function dataFiltered = FilterData(data,dt,mode,para)
 %%%%%%%%%%%%%%%%%%%%%%
 % data          input    data, each column is a data serie
 % dt            input    sample step
-% mode          input    method of filtering£¬1-TD,2-average
+% mode          input    method of filtering??1-TD,2-average
 % para          input    some parameters be used depending on method mode
 % dataFiltered  output   result of data filtering
 
 %% data dimension
-dataNum = size(data,1);
-dataCols = size(data,2);
+dataNum  = size(data,1)
+dataCols = size(data,2)
 %% filter
 dataFiltered = zeros(size(data));
 if mode == 1          % TD filter
@@ -27,14 +27,18 @@ if mode == 1          % TD filter
         dataFiltered(:,i) = X1;
     end
 elseif mode == 2     %average smooth
-        windowSize = para.windowSize;  %odd
-        for i= 1:dataNum
-            if i<=(windowSize-1)/2
-                dataFiltered(i,:) = mean(data(1:windowSize,:));
-            elseif i>=dataNum-(windowSize-1)/2+1
-                dataFiltered(i,:) = mean(data(end-windowSize+1:end,:));
-            else
-                dataFiltered(i,:) = mean(data(i-(windowSize-1)/2:i+(windowSize-1)/2,:));
-            end
-        end
+        %%% This solution by hand is much more time consuming than the
+        %%% movingmean below (10 times faster)
+%         windowSize = para.windowSize;  %odd
+%         for i= 1:dataNum
+%             if i<=(windowSize-1)/2
+%                 dataFiltered(i,:) = mean(data(1:windowSize,:));
+%             elseif i>=dataNum-(windowSize-1)/2+1
+%                 dataFiltered(i,:) = mean(data(end-windowSize+1:end,:));
+%             else
+%                 dataFiltered(i,:) = mean(data(i-(windowSize-1)/2:i+(windowSize-1)/2,:));
+%             end
+%         end
+      
+        dataFiltered =movingmean(data,para.windowSize,1,1);
 end
