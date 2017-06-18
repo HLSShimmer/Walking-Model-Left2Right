@@ -5,21 +5,17 @@
 clear all;close all;clc;
 
 %% flag of running HMM or load memory from previous time
-FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
+FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
     load DataBase_WalkingFoot_shimmer6_10min_Disposed footMotion footStatic
     sensorMotion = footMotion
     sensorStatic = footStatic
-    
     %% parameters for HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time);
-
     %% get state sequence from HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
-    size(data), pause
     [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
-    pause
     zeroVelocityIndex = find(stateEstimated==haltState);
     save WalkingMemoryStorage_shimmer6_WinKmeans13
 else
@@ -34,7 +30,7 @@ title('Gyro X')
 subplot(212)
 plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps')
-pause
+%pause
 
 %% parameter setup for sensor kinematics
 ParaSetupSensorKinematics;
