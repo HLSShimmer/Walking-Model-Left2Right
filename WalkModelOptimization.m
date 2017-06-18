@@ -15,7 +15,11 @@ observeDimension = 1;        %dimension of observation
 optPara = para.optPara;
 %% filter
 dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
-
+tSpan = 16000:20000;
+figure
+plot(tSpan,data(tSpan,dataFiltered(tSpan)),'r')
+title('dataFiltered')
+pause
 
 %% generate HMM struct
 [HMMstruct,~,haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
