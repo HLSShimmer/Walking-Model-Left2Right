@@ -9,40 +9,69 @@ function [HMMstruct,stateSequence,haltState] = InitializeWalkingModel(data,state
 %% declare some values
 signalNum = size(data,2);      %% the number of different signals
 dataLength = size(data,1);     %% length of data, number of samples
-windowSize = 13;               %% window size of determining the current state or next state
-if dataLength < 2*windowSize
-    error('the volume of data if too short!')
-end
-jointProbabilityKmeans = zeros(stateNum,stateNum);
-jointProbability = zeros(stateNum,stateNum);
-transitProbability = zeros(stateNum,stateNum);
-stationaryProbabilityKmeans = zeros(1,stateNum);
-stationaryProbability = zeros(1,stateNum);
-stateSequence = zeros(dataLength,1);
+% windowSize = 13;               %% window size of determining the current state or next state
+% if dataLength < 2*windowSize
+%     error('the volume of data if too short!')
+% end
+% jointProbabilityKmeans      = zeros(stateNum,stateNum);
+% jointProbability            = zeros(stateNum,stateNum);
+% transitProbability          = zeros(stateNum,stateNum);
+% stationaryProbabilityKmeans = zeros(1,stateNum);
+% stationaryProbability       = zeros(1,stateNum);
+% stateSequence               = zeros(dataLength,1);
 %% initial classification by Kmeans
-stateSequenceKmeans = kmeans(data,stateNum);
-%% calculate joint/transit/stationary probability
-for i=windowSize:dataLength-windowSize
-    %get the regarded current state in the window size
-    temp = tabulate(stateSequenceKmeans(i-windowSize+1:i));
-    [~,index] = max(temp(:,2));
-    stateCurrent = temp(index,1);
-    %get the regarded next state in the window size
-    temp = tabulate(stateSequenceKmeans(i+1:i+windowSize));
-    [~,index] = max(temp(:,2));
-    stateNext = temp(index,1);
-    %dispose for joint and stationary probability
-    stationaryProbabilityKmeans(stateCurrent) = stationaryProbabilityKmeans(stateCurrent) + 1;
-    jointProbabilityKmeans(stateCurrent,stateNext) = jointProbabilityKmeans(stateCurrent,stateNext) + 1;
+%%% comment : I choose to replicate the kmeans, to avoid possible abnormal
+%%% convergence (the keamns with the best convergence value is selected)
+stateSequenceKmeans = kmeans(data,stateNum,'Replicates',5);
+
+% tic;
+% %% calculate joint/transit/stationary probability from kmeans classification
+% for i=windowSize:dataLength-windowSize
+%     %get the regarded current state in the window size
+%     temp = tabulate(stateSequenceKmeans(i-windowSize+1:i));
+%     [~,index] = max(temp(:,2));
+%     stateCurrent = temp(index,1);
+%     %get the regarded next state in the window size
+%     temp = tabulate(stateSequenceKmeans(i+1:i+windowSize));
+%     [~,index] = max(temp(:,2));
+%     stateNext = temp(index,1);
+%     %dispose for joint and stationary probability
+%     stationaryProbabilityKmeans(stateCurrent) = stationaryProbabilityKmeans(stateCurrent) + 1;
+%     jointProbabilityKmeans(stateCurrent,stateNext) = jointProbabilityKmeans(stateCurrent,stateNext) + 1;
+% end
+% temp = tabulate(stateSequenceKmeans(end-windowSize+1:end));
+% [~,index] = max(temp(:,2));
+% stateCurrent = temp(index,1);
+% stationaryProbabilityKmeans(stateCurrent) = stationaryProbabilityKmeans(stateCurrent) + 1;
+% %% divide the summation number
+% stationaryProbabilityKmeans = stationaryProbabilityKmeans./(dataLength-2*windowSize + 2);
+% jointProbabilityKmeans      = jointProbabilityKmeans./(dataLength-2*windowSize + 1);
+% transitProbabilityKmeans    = jointProbabilityKmeans./repmat(stationaryProbabilityKmeans.',1,stateNum);
+% toc,
+% stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans, pause
+
+jointProbabilityKmeans      = zeros(stateNum,stateNum);
+transitProbabilityKmeans    = zeros(stateNum,stateNum);
+stationaryProbabilityKmeans = zeros(1,stateNum);
+TABLE = tabulate(stateSequenceKmeans);
+stationaryProbabilityKmeans = TABLE(: , 3) ./ 100;
+for i=2:dataLength,
+    jointProbabilityKmeans(stateSequenceKmeans(i-1), stateSequenceKmeans(i)) = jointProbabilityKmeans(stateSequenceKmeans(i-1), stateSequenceKmeans(i)) + 1;
 end
-temp = tabulate(stateSequenceKmeans(end-windowSize+1:end));
-[~,index] = max(temp(:,2));
-stateCurrent = temp(index,1);
-stationaryProbabilityKmeans(stateCurrent) = stationaryProbabilityKmeans(stateCurrent) + 1;
-%% divide the summation number
-stationaryProbabilityKmeans = stationaryProbabilityKmeans./(dataLength-2*windowSize + 2);
-jointProbabilityKmeans = jointProbabilityKmeans./(dataLength-2*windowSize + 1);
-transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityKmeans.',1,stateNum);
+jointProbabilityKmeans   = jointProbabilityKmeans./(dataLength-1);
+transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityKmeans,1,stateNum);
+%stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans, 
+%sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
+%pause
+
+%% searching for the state order
+% for i=1:stateNum,
+%     [maxim, indexmaxim] = max(transitProbabilityKmeans(i,:));
+%     stateTransferOrder(i) = indexmaxim;
+% end
+% stateTransferOrder
+%pause
+
 %% searching for the state order
 stateSeries = 1:stateNum;
 stateTransferOrder = zeros(stateNum,1);
@@ -65,6 +94,12 @@ for i=1:stateNum
         transitProbability(i,j) = transitProbabilityKmeans(stateTransferOrder(i),stateTransferOrder(j));
     end
 end
+stationaryProbability, jointProbability, transitProbability, 
+stateTransferOrder
+%stateSequence(1:50), stateSequenceKmeans(1:50)
+%sum(stationaryProbability), sum(sum(jointProbability)), sum(sum(transitProbability))
+%pause
+
 %% calculate halt state
 averageABS =zeros(stateNum,1);
 for i=1:stateNum
@@ -75,18 +110,20 @@ for i=1:stateNum
 end
 [~,index] = min(averageABS);
 haltState = index;
-%% genrate HMM struct
+
+%% generate HMM struct
 selectedSignal = para.selectedSignal;               %the index of selected signal
 HMMstruct.N = stateNum;
 HMMstruct.M = 1;
 HMMstruct.observePDFType = 'CONTINUOUS_GAUSSIAN';   %% CONTINUOUS_GAUSSIAN, DISCRET
 HMMstruct.transitMatrixType = 'LEFT2RIGHT';         %% NORMAL, LEFT2RIGHT
 HMMstruct.A = transitProbability;
+
 HMMstruct.B.mixtureNum = 1;
-HMMstruct.B.weights = ones(stateNum,1);
-HMMstruct.B.mu = cell(stateNum,1);
-HMMstruct.B.sigma = cell(stateNum,1);
-HMMstruct.B.PDF = cell(stateNum,1);
+HMMstruct.B.weights    = ones(stateNum,1);
+HMMstruct.B.mu         = cell(stateNum,1);
+HMMstruct.B.sigma      = cell(stateNum,1);
+HMMstruct.B.PDF        = cell(stateNum,1);
 for i=1:stateNum
     HMMstruct.B.mu{i} = mean(data(stateSequence==i,selectedSignal));
     HMMstruct.B.sigma{i} = zeros(1,1,1);
@@ -94,3 +131,5 @@ for i=1:stateNum
     HMMstruct.B.PDF{i} = gmdistribution(HMMstruct.B.mu{i},HMMstruct.B.sigma{i},HMMstruct.B.weights(i,:));
 end
 HMMstruct.initialStateProbability = stationaryProbability;
+
+%HMMstruct.B.mu, pause

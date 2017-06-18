@@ -9,8 +9,8 @@ function dataFiltered = FilterData(data,dt,mode,para)
 % dataFiltered  output   result of data filtering
 
 %% data dimension
-dataNum  = size(data,1)
-dataCols = size(data,2)
+dataNum  = size(data,1);
+dataCols = size(data,2);
 %% filter
 dataFiltered = zeros(size(data));
 if mode == 1          % TD filter
@@ -40,5 +40,5 @@ elseif mode == 2     %average smooth
 %             end
 %         end
       
-        dataFiltered =movingmean(data,para.windowSize,1,1);
+        dataFiltered = movingmean(data,para.windowSize,1,1);
 end

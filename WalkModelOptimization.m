@@ -15,16 +15,24 @@ observeDimension = 1;        %dimension of observation
 optPara = para.optPara;
 %% filter
 dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
-%% filter
-dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
-tSpan = 16000:20000;
-figure
-plot(tSpan,dataFiltered(tSpan),'r')
-title('dataFiltered')
-pause
+% size(dataFiltered)
+% tSpan = 16000:16200;
+% figure
+% plot(tSpan,dataFiltered(tSpan,1),'r')
+% hold on;
+% plot(tSpan,data(tSpan,1),'b')
+% hold off;
+% title('dataFiltered')
+% pause
 
 %% generate HMM struct
+%%% comment : the kmeans is applied on all the 6 vectorial data (accel and gyro)
+%%% maybe not a good strategy: kmeans shoul may be applied on the same
+%%% signal as HMM
+tic;
 [HMMstruct,~,haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
+HMMstruct,haltState
+toc, 
 %% generate HMM model
 model = HMM();
 %% optimal para settings

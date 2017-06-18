@@ -3,21 +3,21 @@
 %%% and HMM to detect zero-velocity, then make the integration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
+tSpan = 16000:20000;
 
 %% flag of running HMM or load memory from previous time
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
     load DataBase_WalkingFoot_shimmer6_10min_Disposed footMotion footStatic
-    sensorMotion = footMotion
-    sensorStatic = footStatic
+    sensorMotion = footMotion;
+    sensorStatic = footStatic;
     
     %% parameters for HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time);
 
     %% get state sequence from HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
-    size(data), pause
     [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
     pause
     zeroVelocityIndex = find(stateEstimated==haltState);
@@ -26,7 +26,6 @@ else
     load WalkingMemoryStorage_shimmer5_WinKmeans13
 end
 %% draw HMM result
-tSpan = 16000:20000;
 figure(1)
 subplot(211)
 plot(tSpan,data(tSpan,para.selectedSignal),'r')
