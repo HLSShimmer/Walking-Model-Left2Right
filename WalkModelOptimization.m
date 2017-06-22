@@ -11,10 +11,11 @@ function [HMMstructOptimized, stateEstimated, haltState] = WalkModelOptimization
 %% declare some values
 %HMM struct paras
 stateNum = 4;                %state number
-observeDimension = 1;        %dimension of observance
+observeDimension = 1;        %dimension of observation
 optPara = para.optPara;
 %% filter
 dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
+
 %% generate HMM struct
 [HMMstruct,~,haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
 %% generate HMM model
