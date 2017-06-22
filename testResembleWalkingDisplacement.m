@@ -4,10 +4,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
 %% flag of running HMM or load memory from previous time
+sensorName = 'shimmer5';
 FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
-    load DataBase_WalkingFoot_shimmer6_10min_Disposed footMotion footStatic
+    fileName = strcat('DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
+    load(fileName,'footMotion', 'footStatic')
     sensorMotion = footMotion;
     sensorStatic = footStatic;
     %% parameters for HMM
@@ -16,9 +18,11 @@ if FLAG_RUN_HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
     [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
     zeroVelocityIndex = find(stateEstimated==haltState);
-    save WalkingMemoryStorage_shimmer6_WinKmeans13
+    fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
+    save(fileName);
 else
-    load WalkingMemoryStorage_shimmer5_WinKmeans13
+    fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
+    load(fileName)
 end
 %% draw HMM result
 tSpan = 16000:20000;
@@ -51,15 +55,44 @@ plot(motionPositionSeries)
 legend('Displacement X','Displacement Y','Displacement Z');
 title('Displacement')
 
-figure(3)
-tSpan = 10000:19000;
+% figure(3)
+% tSpan = 10000:19000;
+% subplot(311)
+% area(tSpan,motionAccelSeries(tSpan,1))
+% title('Accel X in Global Frame')
+% subplot(312)
+% plot(tSpan,quatSeries(tSpan,2))
+% title('Quaternion q1')
+% subplot(313)
+% temp = sqrt(sum(footMotion.Magnetic.^2,2));
+% plot(tSpan,temp(tSpan))
+% title('Magnetic Module')
+
+figure(4)
 subplot(311)
-area(tSpan,motionAccelSeries(tSpan,1))
-title('Accel X in Global Frame')
+plot(motionVelocitySeries(:,1))
+title('Velocity X');
 subplot(312)
-plot(tSpan,quatSeries(tSpan,2))
-title('Quaternion q1')
+plot(motionVelocitySeries(:,2))
+title('Velocity Y');
 subplot(313)
-temp = sqrt(sum(footMotion.Magnetic.^2,2));
-plot(tSpan,temp(tSpan))
-title('Magnetic Module')
+plot(motionVelocitySeries(:,3))
+title('Velocity Z');
+
+figure(5)
+tSpan = 10000:11500;
+subplot(511)
+plot(tSpan,data(tSpan,para.selectedSignal),'r')
+title('Gyro X')
+subplot(512)
+plot(tSpan,motionAccelSeries(tSpan,1))
+title('motion Accel')
+subplot(513)
+plot(tSpan,motionVelocitySeries(tSpan,1))
+title('motion Velocity')
+subplot(514)
+plot(tSpan,motionPositionSeries(tSpan,1))
+title('motion Displacement')
+subplot(515)
+plot(tSpan,stateEstimated(tSpan),'b')
+title('States of Steps')
