@@ -15,6 +15,7 @@ observeDimension = 1;        %dimension of observation
 optPara = para.optPara;
 %% filter
 dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
+<<<<<<< HEAD
 % size(dataFiltered)
 % tSpan = 16000:16200;
 % figure
@@ -24,6 +25,8 @@ dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
 % hold off;
 % title('dataFiltered')
 % pause
+=======
+>>>>>>> cea80e1bb23a9a62cf254868edb20341ecbab128
 
 %% generate HMM struct
 %%% comment : the kmeans is applied on all the 6 vectorial data (accel and gyro)

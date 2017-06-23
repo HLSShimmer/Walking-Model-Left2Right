@@ -3,27 +3,38 @@
 %%% and HMM to detect zero-velocity, then make the integration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
+<<<<<<< HEAD
 tSpan = 16000:20000;
 
+=======
+>>>>>>> cea80e1bb23a9a62cf254868edb20341ecbab128
 %% flag of running HMM or load memory from previous time
-FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
+sensorName = 'shimmer5';
+FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
+<<<<<<< HEAD
     load DataBase_WalkingFoot_shimmer6_10min_Disposed footMotion footStatic
     sensorMotion = footMotion;
     sensorStatic = footStatic;
     
+=======
+    fileName = strcat('DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
+    load(fileName,'footMotion', 'footStatic')
+    sensorMotion = footMotion;
+    sensorStatic = footStatic;
+>>>>>>> cea80e1bb23a9a62cf254868edb20341ecbab128
     %% parameters for HMM
-    [para, methodSet] = ParaSetupWalkModel(sensorMotion.time);
-
+    ParaSetupWalkModel;
     %% get state sequence from HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
     [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
-    pause
     zeroVelocityIndex = find(stateEstimated==haltState);
-    save WalkingMemoryStorage_shimmer6_WinKmeans13
+    fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
+    save(fileName);
 else
-    load WalkingMemoryStorage_shimmer5_WinKmeans13
+    fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
+    load(fileName)
 end
 %% draw HMM result
 figure(1)
@@ -33,8 +44,6 @@ title('Gyro X')
 subplot(212)
 plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps')
-pause
-
 %% parameter setup for sensor kinematics
 ParaSetupSensorKinematics;
 %% data processing, calculate quaternion, motion accel/velocity/displacement
@@ -57,15 +66,44 @@ plot(motionPositionSeries)
 legend('Displacement X','Displacement Y','Displacement Z');
 title('Displacement')
 
-figure(3)
-tSpan = 10000:19000;
+% figure(3)
+% tSpan = 10000:19000;
+% subplot(311)
+% area(tSpan,motionAccelSeries(tSpan,1))
+% title('Accel X in Global Frame')
+% subplot(312)
+% plot(tSpan,quatSeries(tSpan,2))
+% title('Quaternion q1')
+% subplot(313)
+% temp = sqrt(sum(footMotion.Magnetic.^2,2));
+% plot(tSpan,temp(tSpan))
+% title('Magnetic Module')
+
+figure(4)
 subplot(311)
-area(tSpan,motionAccelSeries(tSpan,1))
-title('Accel X in Global Frame')
+plot(motionVelocitySeries(:,1))
+title('Velocity X');
 subplot(312)
-plot(tSpan,quatSeries(tSpan,2))
-title('Quaternion q1')
+plot(motionVelocitySeries(:,2))
+title('Velocity Y');
 subplot(313)
-temp = sqrt(sum(footMotion.Magnetic.^2,2));
-plot(tSpan,temp(tSpan))
-title('Magnetic Module')
+plot(motionVelocitySeries(:,3))
+title('Velocity Z');
+
+figure(5)
+tSpan = 10000:11500;
+subplot(511)
+plot(tSpan,data(tSpan,para.selectedSignal),'r')
+title('Gyro X')
+subplot(512)
+plot(tSpan,motionAccelSeries(tSpan,1))
+title('motion Accel')
+subplot(513)
+plot(tSpan,motionVelocitySeries(tSpan,1))
+title('motion Velocity')
+subplot(514)
+plot(tSpan,motionPositionSeries(tSpan,1))
+title('motion Displacement')
+subplot(515)
+plot(tSpan,stateEstimated(tSpan),'b')
+title('States of Steps')
