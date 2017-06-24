@@ -27,19 +27,5 @@ if mode == 1          % TD filter
         dataFiltered(:,i) = X1;
     end
 elseif mode == 2     %average smooth
-        %%% This solution by hand is much more time consuming than the
-        %%% movingmean below (10 times faster)
-%         windowSize = para.windowSize;  %odd
-%         for i= 1:dataNum
-%             if i<=(windowSize-1)/2
-%                 dataFiltered(i,:) = mean(data(1:windowSize,:));
-%             elseif i>=dataNum-(windowSize-1)/2+1
-%                 dataFiltered(i,:) = mean(data(end-windowSize+1:end,:));
-%             else
-%                 dataFiltered(i,:) = mean(data(i-(windowSize-1)/2:i+(windowSize-1)/2,:));
-%             end
-%         end
-        %tic
-        dataFiltered = movingmean(data,para.windowSize,1,1);
-        %toc, pause
+    dataFiltered = movingmean(data,para.windowSize,1,1);
 end

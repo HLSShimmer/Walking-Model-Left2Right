@@ -28,11 +28,10 @@ dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
 
 %% generate HMM struct
 %%% comment : the kmeans is applied on all the 6 vectorial data (accel and gyro)
-%%% maybe not a good strategy: kmeans shoul may be applied on the same
-%%% signal as HMM
+%%% maybe not a good strategy: maybe kmeans shoul be applied on the same
+%%% signal as HMM?
 tic;
 [HMMstruct,~,haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
-HMMstruct,haltState
 toc, 
 %% generate HMM model
 model = HMM();

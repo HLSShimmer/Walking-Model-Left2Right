@@ -21,6 +21,9 @@ if FLAG_RUN_HMM
     %% get state sequence from HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
     [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
+    
+    disp('be aware that haltState is not correct'), pause
+    
     zeroVelocityIndex = find(stateEstimated==haltState);
     fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
     save(fileName);

@@ -1,0 +1,30 @@
+function [stationaryP, jointP, transitP] = correctLeftRight(stationaryPKmeans, jointPKmeans, transitPKmeans)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Correct the matrices to make the model Left-Right
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%stationaryPKmeans   input           Original init law from the kmeans
+%jointPKmeans        input           Original joint matrix from the kmeans
+%transitPKmeans      input           Original transit matrix from kmeans
+
+stationaryP = zeros(size(stationaryPKmeans));
+jointP      = zeros(size(jointPKmeans));
+transitP    = zeros(size(transitPKmeans));
+
+stateNumber = size(stationaryP, 1);
+
+stationaryP = stationaryPKmeans;
+for k=1:stateNumber,
+    [val, indice] = max(transitPKmeans(k,:));
+    indicepun = mod(indice,stateNumber)+1;
+ 
+    transitP(k, indice)    = transitPKmeans(k, indice);
+    transitP(k, indicepun) = 1.-transitP(k, indice);
+    
+    jointP(k, :) = transitP(k, :) .* stationaryP(k);
+end
+
+
+
+
+

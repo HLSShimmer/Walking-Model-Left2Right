@@ -34,7 +34,7 @@ stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans,
 %pause
 
 % Correction of the a priori matrices to be a Left-Right model
-[stationaryProbability, jointProbability, transitProbability] = correctLeftRight(stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans);
+[stationaryProbability, jointProbability, transitProbability] = correctLeftRight(stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans)
 stationaryProbability, jointProbability, transitProbability, 
 sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
 pause
