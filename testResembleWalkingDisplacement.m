@@ -4,8 +4,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
 %% flag of running HMM or load memory from previous time
-sensorName = 'shimmer5';
-FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
+sensorName = 'shimmer4';
+FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
     fileName = strcat('DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
@@ -13,9 +13,10 @@ if FLAG_RUN_HMM
     sensorMotion = footMotion;
     sensorStatic = footStatic;
     %% parameters for HMM
-    ParaSetupWalkModel;
+    [para, methodSet] = ParaSetupWalkModel(sensorMotion.time) ;
     %% get state sequence from HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
+    
     [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
     zeroVelocityIndex = find(stateEstimated==haltState);
     fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');

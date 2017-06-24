@@ -18,7 +18,7 @@ classdef HMM
     methods
         function obj = HMM()
             obj.HMMstruct = struct('N',0,'M',0,'A',0,'B',0,'initialStateProbability',0,'observePDFType',0,'transitMatrixType',0);
-            obj.optPara = struct('maxIter',1000,'tolerance',1e-3);
+            obj.optPara = struct('maxIter',20,'tolerance',2e-4);
             obj.observeSequence = [];
             obj.alpha = [];
             obj.beta = [];
@@ -71,7 +71,7 @@ classdef HMM
         obj = CalculateGamma(obj);
         %get probability or pdf of the observance at n given by the state
         observeSequenceProbability = GetObserveProbability(obj,stateIndex,timeIndex);
-        %calculate update information, A, B, ¦Ð
+        %calculate update information, A, B, ??
         [A,B,initialStateProbability] = CalculateUpdateInformation(obj);
         %update the GMM struct, used in each iteration of baum-welch algo
         B = UpdateBContinuous(obj);
