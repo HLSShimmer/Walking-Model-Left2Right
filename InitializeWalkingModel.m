@@ -9,6 +9,18 @@ function [HMMstruct,stateSequence,haltState] = InitializeWalkingModel(data,state
 %% declare some values
 signalNum = size(data,2);      %% the number of different signals
 dataLength = size(data,1);     %% length of data, number of samples
+tSpan = 16000:16500;
+
+
+
+
+% %% initial classification by Kmeans
+% %%% comment : I choose to replicate the kmeans, to avoid possible abnormal
+% %%% convergence (the keamns with the best convergence value is selected)
+stateSequenceKmeans = kmeans(data,stateNum,'Replicates',5);
+
+
+
 % windowSize = 13;               %% window size of determining the current state or next state
 % if dataLength < 2*windowSize
 %     error('the volume of data if too short!')
@@ -19,11 +31,7 @@ dataLength = size(data,1);     %% length of data, number of samples
 % stationaryProbabilityKmeans = zeros(1,stateNum);
 % stationaryProbability       = zeros(1,stateNum);
 % stateSequence               = zeros(dataLength,1);
-%% initial classification by Kmeans
-%%% comment : I choose to replicate the kmeans, to avoid possible abnormal
-%%% convergence (the keamns with the best convergence value is selected)
-stateSequenceKmeans = kmeans(data,stateNum,'Replicates',5);
-
+% 
 % tic;
 % %% calculate joint/transit/stationary probability from kmeans classification
 % for i=windowSize:dataLength-windowSize
@@ -60,16 +68,8 @@ for i=2:dataLength,
 end
 jointProbabilityKmeans   = jointProbabilityKmeans./(dataLength-1);
 transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityKmeans,1,stateNum);
-%stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans, 
-%sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
-%pause
-
-%% searching for the state order
-% for i=1:stateNum,
-%     [maxim, indexmaxim] = max(transitProbabilityKmeans(i,:));
-%     stateTransferOrder(i) = indexmaxim;
-% end
-% stateTransferOrder
+stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans, 
+sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
 %pause
 
 %% searching for the state order
@@ -95,7 +95,14 @@ for i=1:stateNum
     end
 end
 stationaryProbability, jointProbability, transitProbability, 
-stateTransferOrder
+stateTransferOrder, 
+
+figure(10)
+plot(tSpan, stateSequenceKmeans(tSpan), 'r')
+hold on
+plot(tSpan, stateSequence(tSpan), 'b')
+hold off
+pause
 %stateSequence(1:50), stateSequenceKmeans(1:50)
 %sum(stationaryProbability), sum(sum(jointProbability)), sum(sum(transitProbability))
 %pause

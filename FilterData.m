@@ -39,6 +39,7 @@ elseif mode == 2     %average smooth
 %                 dataFiltered(i,:) = mean(data(i-(windowSize-1)/2:i+(windowSize-1)/2,:));
 %             end
 %         end
-      
+        %tic
         dataFiltered = movingmean(data,para.windowSize,1,1);
+        %toc, pause
 end

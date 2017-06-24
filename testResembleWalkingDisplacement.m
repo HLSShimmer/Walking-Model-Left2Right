@@ -3,29 +3,21 @@
 %%% and HMM to detect zero-velocity, then make the integration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
-<<<<<<< HEAD
+
 tSpan = 16000:20000;
 
-=======
->>>>>>> cea80e1bb23a9a62cf254868edb20341ecbab128
 %% flag of running HMM or load memory from previous time
 sensorName = 'shimmer5';
-FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
+FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
-<<<<<<< HEAD
-    load DataBase_WalkingFoot_shimmer6_10min_Disposed footMotion footStatic
-    sensorMotion = footMotion;
-    sensorStatic = footStatic;
-    
-=======
+
     fileName = strcat('DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
     load(fileName,'footMotion', 'footStatic')
     sensorMotion = footMotion;
     sensorStatic = footStatic;
->>>>>>> cea80e1bb23a9a62cf254868edb20341ecbab128
     %% parameters for HMM
-    ParaSetupWalkModel;
+    [para, methodSet] = ParaSetupWalkModel(sensorMotion.time);
     %% get state sequence from HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
     [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
