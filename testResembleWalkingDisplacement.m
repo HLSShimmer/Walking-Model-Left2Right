@@ -7,7 +7,7 @@ clear all;close all;clc;
 tSpan = 16000:20000;
 
 %% flag of running HMM or load memory from previous time
-sensorName = 'shimmer5';
+sensorName = 'shimmer2';
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
