@@ -38,6 +38,7 @@ model = HMM();
 %% optimal para settings
 model = model.SetModel(HMMstruct);
 model = model.SetOptPara(optPara);
+
 %% optimize model
 observeSequence = dataFiltered(:,para.selectedSignal);
 tic

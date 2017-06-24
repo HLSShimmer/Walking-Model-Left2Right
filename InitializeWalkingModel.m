@@ -1,4 +1,4 @@
-function [HMMstruct,stateSequence,haltState] = InitializeWalkingModel(data,stateNum,para)
+function [HMMstruct,stateSequenceKmeans,haltState] = InitializeWalkingModel(data,stateNum,para)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% get an initial HMM model by KMeans with the input data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,15 +29,15 @@ for i=2:dataLength,
 end
 jointProbabilityKmeans   = jointProbabilityKmeans./(dataLength-1);
 transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityKmeans,1,stateNum);
-stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans, 
+%stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans, 
 %%sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
 %pause
 
 % Correction of the a priori matrices to be a Left-Right model
 [stationaryProbability, jointProbability, transitProbability] = correctLeftRight(stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans);
-stationaryProbability, jointProbability, transitProbability, 
-sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
-pause
+%stationaryProbability, jointProbability, transitProbability, 
+%sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
+%pause
 
 % not sure it is necessary
 % %% searching for the state order
@@ -86,7 +86,7 @@ pause
 % end
 % [~,index] = min(averageABS);
 % haltState = index;
-haltState = -1
+haltState = -1;
 
 %% generate HMM struct
 selectedSignal = para.selectedSignal;               %the index of selected signal
@@ -102,9 +102,9 @@ HMMstruct.B.mu         = cell(stateNum,1);
 HMMstruct.B.sigma      = cell(stateNum,1);
 HMMstruct.B.PDF        = cell(stateNum,1);
 for i=1:stateNum
-    HMMstruct.B.mu{i}    = mean(data(stateSequence==i,selectedSignal));
+    HMMstruct.B.mu{i}    = mean(data(stateSequenceKmeans==i,selectedSignal));
     HMMstruct.B.sigma{i} = zeros(1,1,1);
-    HMMstruct.B.sigma{i}(1,1,1) = var(data(stateSequence==i,selectedSignal));
+    HMMstruct.B.sigma{i}(1,1,1) = var(data(stateSequenceKmeans==i,selectedSignal));
     HMMstruct.B.PDF{i}   = gmdistribution(HMMstruct.B.mu{i},HMMstruct.B.sigma{i},HMMstruct.B.weights(i,:));
 end
 HMMstruct.initialStateProbability = stationaryProbability;

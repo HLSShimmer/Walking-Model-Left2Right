@@ -49,6 +49,8 @@ classdef HMM
         [stateSequence,observeSequence] = GenerateObserveSequence(obj,observeLength);
         %optimization paras setting function
         obj = SetOptPara(obj,optPara);
+        %get model function
+        optPara = GetOptPara(obj);
         %calculate&get forward backward result
         [forwardResult,backwardResult] = GetForwardBackward(obj,observeSequence);
         %get observe discrete probability distribution or pdf for each state
@@ -71,7 +73,7 @@ classdef HMM
         obj = CalculateGamma(obj);
         %get probability or pdf of the observance at n given by the state
         observeSequenceProbability = GetObserveProbability(obj,stateIndex,timeIndex);
-        %calculate update information, A, B, ¦Ð
+        %calculate update information, A, B, ??
         [A,B,initialStateProbability] = CalculateUpdateInformation(obj);
         %update the GMM struct, used in each iteration of baum-welch algo
         B = UpdateBContinuous(obj);
