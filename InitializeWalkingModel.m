@@ -1,4 +1,4 @@
-function [HMMstruct,stateSequenceKmeans,haltState] = InitializeWalkingModel(data,stateNum,para)
+function [HMMstruct,stateSequenceKmeans] = InitializeWalkingModel(data,stateNum,para)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% get an initial HMM model by KMeans with the input data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7,7 +7,7 @@ function [HMMstruct,stateSequenceKmeans,haltState] = InitializeWalkingModel(data
 %para                input           structure with some constant value
 %HMMstruct           output          structure with initialized HMM model
 %stateSequence       output          re-arranged state sequence from KMeans method
-%haltstate           output          state with 0 velocity
+
 %% declare some values
 signalNum = size(data,2);      %% the number of different signals
 dataLength = size(data,1);     %% length of data, number of samples
@@ -39,54 +39,10 @@ transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityK
 %sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
 %pause
 
-% not sure it is necessary
-% %% searching for the state order
-% stateSeries = 1:stateNum;
-% stateTransferOrder = zeros(stateNum,1);
-% [~,stateTransferOrder(1)]=min(stationaryProbabilityKmeans);     %start with the minimum possibility state, it's better
-% stateSeries(stateSeries==stateTransferOrder(1)) = [];           %when find a correct state order, delete the state in stateSeries
-% for i = 1:stateNum-1
-%     temp = transitProbabilityKmeans(stateTransferOrder(i),stateSeries);
-%     [~,index] = max(temp);
-%     stateTransferOrder(i+1) = stateSeries(index);
-%     stateSeries(stateSeries==stateTransferOrder(i+1)) = [];     %when find a correct state order, delete the state in stateSeries
-% end
-% %% re-arrange the state according to the order, also change the joint/transit/stationary probability
-% for i=1:stateNum
-%     stateSequence(stateSequenceKmeans==stateTransferOrder(i)) = i;
-%     stationaryProbability(i) = stationaryProbabilityKmeans(stateTransferOrder(i));
-% end
-% for i=1:stateNum
-%     for j=1:stateNum
-%         jointProbability(i,j) = jointProbabilityKmeans(stateTransferOrder(i),stateTransferOrder(j));
-%         transitProbability(i,j) = transitProbabilityKmeans(stateTransferOrder(i),stateTransferOrder(j));
-%     end
-% end
-% %stationaryProbability, jointProbability, 
-% transitProbability, 
-% stateTransferOrder, pause
 
-% figure(10)
-% %plot(tSpan, stateSequenceKmeans(tSpan), 'r')
-% hold on
-% plot(tSpan, stateSequence(tSpan), 'b')
-% hold off
-% pause
-%stateSequence(1:50), stateSequenceKmeans(1:50)
-%sum(stationaryProbability), sum(sum(jointProbability)), sum(sum(transitProbability))
-%pause
 
-%% calculate halt state
-% averageABS =zeros(stateNum,1);
-% for i=1:stateNum
-%     temp = data(stateSequence==i,:);
-%     for j=1:signalNum
-%         averageABS(i) = averageABS(i) + abs(mean(temp(:,j)));
-%     end
-% end
-% [~,index] = min(averageABS);
-% haltState = index;
-haltState = -1;
+
+
 
 %% generate HMM struct
 selectedSignal = para.selectedSignal;               %the index of selected signal
@@ -107,6 +63,6 @@ for i=1:stateNum
     HMMstruct.B.sigma{i}(1,1,1) = var(data(stateSequenceKmeans==i,selectedSignal));
     HMMstruct.B.PDF{i}   = gmdistribution(HMMstruct.B.mu{i},HMMstruct.B.sigma{i},HMMstruct.B.weights(i,:));
 end
-HMMstruct.initialStateProbability = stationaryProbability;
+HMMstruct.initialStateProbability = stationaryProbability';
 
 %HMMstruct.B.mu, pause

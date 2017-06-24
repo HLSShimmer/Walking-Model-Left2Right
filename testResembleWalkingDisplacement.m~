@@ -20,10 +20,10 @@ if FLAG_RUN_HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time);
     %% get state sequence from HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
-    [HMMstruct, stateEstimated, stateNum] = WalkModelOptimization(data,para,methodSet);
+    [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
     
     % arange the classification to fit the walking steps
-    haltState = arangeWalking(HMMstruct, stateEstimated, stateNum)
+    
     disp('be aware that haltState is not correct'), pause
     
     zeroVelocityIndex = find(stateEstimated==haltState);

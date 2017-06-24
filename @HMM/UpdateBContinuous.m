@@ -10,9 +10,9 @@ stateNum = size(obj.HMMstruct.B.mu,1);                      %state number
 gaussianDimension = size(obj.observeSequence,2);            %dimension of each gaussian distribution , i.e. the dimension of observance
 mixtureNum = obj.HMMstruct.B.mixtureNum;                    %mixture number
 weights = zeros(stateNum,mixtureNum);                       %weights
-mu = cell(stateNum,1);                                      %mean value of GMM for each hidden state
+mu    = cell(stateNum,1);                                   %mean value of GMM for each hidden state
 sigma = cell(stateNum,1);                                   %covariance of GMM for each hidden state
-PDF = cell(stateNum,1);                                     %pdf of GMM for each hidden state
+PDF   = cell(stateNum,1);                                   %pdf of GMM for each hidden state
 gammaSaparate = zeros(stateNum,mixtureNum,observeLength);   %gamma value for each different gaussian mixture component
 %% calculate gammaSaparate
 for i=1:observeLength
@@ -32,7 +32,7 @@ for i=1:observeLength
 end
 %% update
 for i=1:stateNum
-    mu{i} = zeros(mixtureNum,gaussianDimension);
+    mu{i}    = zeros(mixtureNum,gaussianDimension);
     sigma{i} = zeros(gaussianDimension,gaussianDimension,mixtureNum);
     for j=1:mixtureNum
         %weights
@@ -51,7 +51,7 @@ for i=1:stateNum
     PDF{i} = gmdistribution(mu{i},sigma{i},weights(i,:));
 end
 Bupdated.mixtureNum = mixtureNum;
-Bupdated.weights = weights;
-Bupdated.mu = mu;
-Bupdated.sigma = sigma;
-Bupdated.PDF = PDF;
+Bupdated.weights    = weights;
+Bupdated.mu         = mu;
+Bupdated.sigma      = sigma;
+Bupdated.PDF        = PDF;

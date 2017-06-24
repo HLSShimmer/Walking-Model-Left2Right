@@ -30,12 +30,16 @@ while criteriaValue <= (1-tolerance)
     criteriaValue, tolerance, 
     
     %% make forward and backward procedure
+    tic
     obj = obj.ForwardBackwardProcedure2();
+    toc, pause
     
     %% calculate the update value of model
+    tic,
     [A,B,initialStateProbability] = obj.CalculateUpdateInformation();
-    %sum(sum(A)), A, 
-    B.mu
+    toc
+    sum(sum(A))
+    A, B.mu, initialStateProbability, pause
     
     %% calculate and analyze the result, based on some criteria
     if nargin==2
@@ -44,7 +48,7 @@ while criteriaValue <= (1-tolerance)
         for i=1:observeLength
             [~,bestBackwardStateCurrent(i)] = max(obj.gamma(i,:));
         end
-        criteriaValue = sum(bestBackwardStateCurrent==stateEstimated)/observeLength;
+        criteriaValue = sum(bestBackwardStateCurrent==stateEstimated)/observeLength
         stateEstimated = bestBackwardStateCurrent;
     elseif nargin==3
         %%if there is ground truth of state sequence
@@ -57,7 +61,6 @@ while criteriaValue <= (1-tolerance)
         criteriaValue = correctRatio;
         residual = [residual;1 - correctRatio];
     end
-
     %% model update
     obj.HMMstruct.initialStateProbability = initialStateProbability;
     obj.HMMstruct.A = A;

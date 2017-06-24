@@ -1,4 +1,4 @@
-function [HMMstructOptimized, stateEstimated, stateNum] = WalkModelOptimization(data,para,methodSet)
+function [HMMstructOptimized, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% left-to-right walking model optimization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7,6 +7,7 @@ function [HMMstructOptimized, stateEstimated, stateNum] = WalkModelOptimization(
 %methodSet              input        method settings
 %HMMstructOptimized     output       HMM struct
 %stateEstimated         output       estimated state for each sample time
+%haltState              output       the state which means zero velocity
 %% declare some values
 %HMM struct paras
 stateNum = 4;                %state number
@@ -30,11 +31,11 @@ dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
 %%% maybe not a good strategy: maybe kmeans shoul be applied on the same
 %%% signal as HMM?
 tic;
-[HMMstruct,~] = InitializeWalkingModel(dataFiltered,stateNum,para);
+[HMMstruct,~,haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
 toc, 
 %% generate HMM model
 observeLength = length(dataFiltered);
-model = HMM(observeLength, HMMstruct.N);
+model = HMM();
 %% optimal para settings
 model = model.SetModel(HMMstruct);
 model = model.SetOptPara(optPara);

@@ -13,20 +13,19 @@ classdef HMM
         gamma;                      %probability of state at n given by the entire observe sequence
         ksai;                       %probability of state at n and n+1 given by the entire observe sequence
         observeSequenceProbability; %probability or pdf of the observance at n given by the state
-        Sn
     end
     %% constructor
     methods
         function obj = HMM(observeLength, N)
             obj.HMMstruct = struct('N',N,'M',0,'A',0,'B',0,'initialStateProbability',0,'observePDFType',0,'transitMatrixType',0);
-            obj.optPara = struct('maxIter',2,'tolerance',2e-4);
+            obj.optPara = struct('maxIter',1000,'tolerance',1e-3);
             obj.observeSequence = [];
             obj.alpha = zeros(observeLength,N);
-            obj.beta  = zeros(observeLength,N);
+            obj.beta = zeros(observeLength,N);
+ 
             obj.gamma = zeros(observeLength,N);
-            obj.ksai  = zeros(N,N,observeLength-1);
-            obj.Sn    = zeros(observeLength-1,1);
-            %obj.observeSequenceProbability = [];
+            obj.ksai = zeros(N,N,observeLength-1);
+            obj.observeSequenceProbability = [];
         end
     end
     %% public method

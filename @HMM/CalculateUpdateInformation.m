@@ -1,6 +1,6 @@
 function [A,B,initialStateProbability] = CalculateUpdateInformation(obj)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Calculate Update of A, B, ¦Ð %%%
+%%% Calculate Update of A, B, ?? %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %obj                       input       object
 %A                         output      updated transition matrix
@@ -21,15 +21,13 @@ if strcmp(obj.HMMstruct.transitMatrixType,'NORMAL')
         end
     end
 elseif strcmp(obj.HMMstruct.transitMatrixType,'LEFT2RIGHT')
-    DELTA = zeros(4,1);
-    for i=1:N-1
-        DELTA(i) = sum(obj.ksai(i,i+1,:))/(sum(obj.ksai(i,i,:))+sum(obj.ksai(i,i+1,:)));
-        A(i,i) = 1 - DELTA(i);
-        A(i,i+1) = DELTA(i);
+    DELTA = zeros(N,1);
+    for i=1:N
+        ipun = mod(i,N)+1;
+        DELTA(i) = sum(obj.ksai(i,ipun,:))/(sum(obj.ksai(i,i,:))+sum(obj.ksai(i,ipun,:)));
+        A(i,i)    = 1 - DELTA(i);
+        A(i,ipun) = DELTA(i);
     end
-    DELTA(N) = sum(obj.ksai(N,1,:))/(sum(obj.ksai(N,N,:))+sum(obj.ksai(N,1,:)));
-    A(N,N) = 1 - DELTA(N);
-    A(N,1) = DELTA(N);
 end
 %% Update B
 if strcmp(obj.HMMstruct.observePDFType,'DISCRET')
@@ -41,7 +39,7 @@ if strcmp(obj.HMMstruct.observePDFType,'DISCRET')
 elseif strcmp(obj.HMMstruct.observePDFType,'CONTINUOUS_GAUSSIAN')
     B = obj.UpdateBContinuous();
 end
-%% Update ¦Ð
+%% Update ??
 for i=1:N
     initialStateProbability(i) = obj.gamma(1,i)/sum(obj.gamma(1,:));
 end
