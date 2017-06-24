@@ -8,7 +8,7 @@ tSpan = 16000:20000;
 
 %% flag of running HMM or load memory from previous time
 sensorName = 'shimmer5';
-FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
+FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
 
@@ -24,14 +24,14 @@ if FLAG_RUN_HMM
     
     % arange the classification to fit the walking steps
     [haltState, stateEstimated] = arangeWalking(data, HMMstruct, stateEstimated, stateNum, para.selectedSignal);
-    haltState
+    % haltState
     
     figure(10)
     %plot(tSpan, stateSequenceKmeans(tSpan), 'r')
     %hold on
     plot(tSpan, stateEstimated(tSpan), 'b')
     %hold off
-    pause
+    %pause
     
     zeroVelocityIndex = find(stateEstimated==haltState);
     fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');

@@ -27,8 +27,8 @@ function [haltState, rearangedStateSequence] = arangeWalking(data, HMMstruct, st
             transitProbability(i,j) = HMMstruct.A(stateTransferOrder(i),stateTransferOrder(j));
         end
     end
-    stationaryProbability, transitProbability, 
-    stateTransferOrder, pause
+    %stationaryProbability, transitProbability, 
+    %stateTransferOrder, pause
 
     %% calculate halt state
     averageABS = zeros(stateNum,1);
@@ -38,8 +38,7 @@ function [haltState, rearangedStateSequence] = arangeWalking(data, HMMstruct, st
             averageABS(i) = averageABS(i) + abs(mean(temp(:,j)));
         end
     end
-    [~,index] = min(averageABS);
-    haltState = index, pause
+    [~,haltState] = min(averageABS);
 
     
     %% update HMM struct
