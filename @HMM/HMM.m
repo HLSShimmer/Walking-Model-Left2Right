@@ -19,7 +19,7 @@ classdef HMM
     methods
         function obj = HMM(observeLength, N)
             obj.HMMstruct = struct('N',N,'M',0,'A',0,'B',0,'initialStateProbability',0,'observePDFType',0,'transitMatrixType',0);
-            obj.optPara = struct('maxIter',2,'tolerance',2e-4);
+            obj.optPara = struct('maxIter',20,'tolerance',2e-4);
             obj.observeSequence = [];
             obj.alpha = zeros(observeLength,N);
             obj.beta  = zeros(observeLength,N);

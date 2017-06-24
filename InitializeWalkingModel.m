@@ -35,14 +35,9 @@ transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityK
 
 % Correction of the a priori matrices to be a Left-Right model
 [stationaryProbability, jointProbability, transitProbability] = correctLeftRight(stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans);
-%stationaryProbability, jointProbability, transitProbability, 
+stationaryProbability, jointProbability, transitProbability, 
 %sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
 %pause
-
-
-
-
-
 
 %% generate HMM struct
 selectedSignal = para.selectedSignal;               %the index of selected signal

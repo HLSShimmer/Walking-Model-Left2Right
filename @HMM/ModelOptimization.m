@@ -27,7 +27,7 @@ elseif nargin==3
 end
 stateEstimated = zeros(observeLength,1);
 while criteriaValue <= (1-tolerance)
-    criteriaValue, tolerance, 
+    disp([criteriaValue; count]) 
     
     %% make forward and backward procedure
     obj = obj.ForwardBackwardProcedure2();
@@ -62,7 +62,7 @@ while criteriaValue <= (1-tolerance)
     obj.HMMstruct.initialStateProbability = initialStateProbability;
     obj.HMMstruct.A = A;
     obj.HMMstruct.B = B;
-    count = count + 1
+    count = count + 1;
     if count>obj.optPara.maxIter
         break;
     end
