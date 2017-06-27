@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
 %% flag of running HMM or load memory from previous time
-sensorName = 'shimmer4';
+sensorName = 'shimmer5';
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
@@ -26,7 +26,7 @@ else
     load(fileName)
 end
 %% draw HMM result
-tSpan = 16000:20000;
+tSpan = 16000:16500;
 figure(1)
 subplot(211)
 plot(tSpan,data(tSpan,para.selectedSignal),'r')
