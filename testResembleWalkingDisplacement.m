@@ -3,15 +3,13 @@
 %%% and HMM to detect zero-velocity, then make the integration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
-
 tSpan = 16000:20000;
 
 %% flag of running HMM or load memory from previous time
-sensorName = 'shimmer2';
+sensorName = 'shimmer5';
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
-
     fileName = strcat('DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
     load(fileName,'footMotion', 'footStatic')
     sensorMotion = footMotion;
@@ -26,10 +24,10 @@ if FLAG_RUN_HMM
     [haltState, stateEstimated] = arangeWalking(data, HMMstruct, stateEstimated, stateNum, para.selectedSignal);
     % haltState
     
-    figure(10)
+    %figure(10)
     %plot(tSpan, stateSequenceKmeans(tSpan), 'r')
     %hold on
-    plot(tSpan, stateEstimated(tSpan), 'b')
+    %plot(tSpan, stateEstimated(tSpan), 'b')
     %hold off
     %pause
     

@@ -40,9 +40,9 @@ model = model.SetOptPara(optPara);
 
 %% optimize model
 observeSequence = dataFiltered(:,para.selectedSignal);
-tic
 [model,HMMstructOptimized,stateEstimated,flag] = model.ModelOptimization(observeSequence);
-toc
+HMMstructOptimized.A
+
 %% display the result of optimization
 if flag==0
     disp('Optimization finished and has reached the maximum iteration')
