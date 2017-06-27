@@ -11,7 +11,6 @@ function [HMMstruct,stateSequenceKmeans] = InitializeWalkingModel(data,stateNum,
 %% declare some values
 signalNum = size(data,2);      %% the number of different signals
 dataLength = size(data,1);     %% length of data, number of samples
-tSpan = 16000:16500;
 
 % initial classification by Kmeans
 % comment : I choose to replicate the kmeans, to avoid possible abnormal

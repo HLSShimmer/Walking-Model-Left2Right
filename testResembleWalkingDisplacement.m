@@ -3,11 +3,10 @@
 %%% and HMM to detect zero-velocity, then make the integration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
-tSpan = 16000:20000;
 
 %% flag of running HMM or load memory from previous time
 sensorName = 'shimmer5';
-FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
+FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
     fileName = strcat('DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
@@ -38,6 +37,9 @@ else
     fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
     load(fileName)
 end
+
+tSpan = 16000:16500;
+
 %% draw HMM result
 figure(1)
 subplot(211)
@@ -45,7 +47,7 @@ plot(tSpan,data(tSpan,para.selectedSignal),'r')
 title('Gyro X')
 subplot(212)
 plot(tSpan,stateEstimated(tSpan),'b')
-title('States of Steps')
+title('States of Steps');
 %% parameter setup for sensor kinematics
 ParaSetupSensorKinematics;
 %% data processing, calculate quaternion, motion accel/velocity/displacement
@@ -93,7 +95,6 @@ plot(motionVelocitySeries(:,3))
 title('Velocity Z');
 
 figure(5)
-tSpan = 10000:11500;
 subplot(511)
 plot(tSpan,data(tSpan,para.selectedSignal),'r')
 title('Gyro X')
