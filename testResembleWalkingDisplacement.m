@@ -81,7 +81,6 @@ plot(motionVelocitySeries(:,3))
 title('Velocity Z');
 
 figure(5)
-tSpan = 10000:11500;
 subplot(511)
 plot(tSpan,data(tSpan,para.selectedSignal),'r')
 title('Gyro X')
