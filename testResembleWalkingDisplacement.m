@@ -6,7 +6,7 @@ clear all;close all;clc;
 
 %% flag of running HMM or load memory from previous time
 sensorName = 'shimmer5';
-FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
+FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 if FLAG_RUN_HMM
     %% load data
     fileName = strcat('DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
@@ -38,7 +38,7 @@ else
     load(fileName)
 end
 
-tSpan = 16000:16500;
+tSpan = 16000:17000;
 
 %% draw HMM result
 figure(1)
@@ -95,18 +95,18 @@ plot(motionVelocitySeries(:,3))
 title('Velocity Z');
 
 figure(5)
-subplot(511)
-plot(tSpan,data(tSpan,para.selectedSignal),'r')
-title('Gyro X')
-subplot(512)
-plot(tSpan,motionAccelSeries(tSpan,1))
+% subplot(511)
+% plot(tSpan,data(tSpan,para.selectedSignal),'r')
+% title('Gyro X')
+subplot(411)
+plot(tSpan,motionAccelSeries(tSpan,3))
 title('motion Accel')
-subplot(513)
-plot(tSpan,motionVelocitySeries(tSpan,1))
+subplot(412)
+plot(tSpan,motionVelocitySeries(tSpan,3))
 title('motion Velocity')
-subplot(514)
-plot(tSpan,motionPositionSeries(tSpan,1))
+subplot(413)
+plot(tSpan,motionPositionSeries(tSpan,3))
 title('motion Displacement')
-subplot(515)
+subplot(414)
 plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps')

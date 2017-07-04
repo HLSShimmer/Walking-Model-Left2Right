@@ -14,6 +14,7 @@ observeDimension = 1;        %dimension of observation
 optPara = para.optPara;
 %% filter
 dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
+dataFiltered = data;
 
 % size(dataFiltered)
 % tSpan = 16000:16200;
