@@ -1,4 +1,4 @@
-function [HMMstruct,stateSequenceKmeans] = InitializeWalkingModel(data,stateNum,para)
+function [HMMstruct,stateSequenceKmeans, haltState] = InitializeWalkingModel(data,stateNum,para)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% get an initial HMM model by KMeans with the input data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -32,9 +32,48 @@ transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityK
 %%sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
 %pause
 
+%% searching for the state order
+stateSequence = zeros(size(stateSequenceKmeans));
+jointProbability      = zeros(stateNum, stateNum);
+transitProbability    = zeros(stateNum, stateNum);
+stationaryProbability = zeros(       1, stateNum);
+stateSeries = 1:stateNum;
+stateTransferOrder = zeros(stateNum,1);
+[~,stateTransferOrder(1)]=min(stationaryProbabilityKmeans);     %start with the minimum possibility state, it's better
+stateSeries(stateSeries==stateTransferOrder(1)) = [];           %when find a correct state order, delete the state in stateSeries
+for i = 1:stateNum-1
+    temp = transitProbabilityKmeans(stateTransferOrder(i),stateSeries);
+    [~,index] = max(temp);
+    stateTransferOrder(i+1) = stateSeries(index);
+    stateSeries(stateSeries==stateTransferOrder(i+1)) = [];     %when find a correct state order, delete the state in stateSeries
+end
+%% re-arrange the state according to the order, also change the joint/transit/stationary probability
+for i=1:stateNum
+    stateSequence(stateSequenceKmeans==stateTransferOrder(i)) = i;
+    stationaryProbability(i) = stationaryProbabilityKmeans(stateTransferOrder(i));
+end
+for i=1:stateNum
+    for j=1:stateNum
+        jointProbability(i,j) = jointProbabilityKmeans(stateTransferOrder(i),stateTransferOrder(j));
+        transitProbability(i,j) = transitProbabilityKmeans(stateTransferOrder(i),stateTransferOrder(j));
+    end
+end
+%% calculate halt state
+averageABS =zeros(stateNum,1);
+for i=1:stateNum
+    temp = data(stateSequence==i,:);
+    for j=1:signalNum
+        averageABS(i) = averageABS(i) + abs(mean(temp(:,j)));
+    end
+end
+[~,index] = min(averageABS);
+haltState = index;
+
+%stationaryProbability, jointProbability, transitProbability, 
+
 % Correction of the a priori matrices to be a Left-Right model
 [stationaryProbability, jointProbability, transitProbability] = correctLeftRight(stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans);
-stationaryProbability, jointProbability, transitProbability, 
+%stationaryProbability, jointProbability, transitProbability, pause
 %sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
 %pause
 

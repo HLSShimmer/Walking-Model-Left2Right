@@ -36,7 +36,7 @@ para.lamdaV = 0.001;             %threshold of variance
 para.lamdaM = 20;               %threshold of interval
 para.populationSize = 10;
 %% mothed setting
-methodSet.dataFilter = 2;         %1-TD£¬2-Average
+methodSet.dataFilter = 2;         %1-TD??2-Average
 methodSet.quaternion = 1;         %1-Madgwick,2-Fourati
 methodSet.accelIntegrate = 3;     %1-TimeDomain;3-ZUPT
 %% motion categories
@@ -46,9 +46,9 @@ temp = zeros(size(data,1),1);
 temp(zeroVelocityIndex) = 1;
 otherValues.zeroVelocityIndex = temp;
 %kalman struct settings
-fileName = strcat(sensorName,'_NoiseMeasurement');
+fileName = strcat('../Data/', sensorName,'_NoiseMeasurement');
 load(fileName)
-kalmanStruct.statePrevious = zeros(9,1);  %¦Är,¦Äv,¦Äa 
+kalmanStruct.statePrevious = zeros(9,1);  %??r,??v,??a 
 kalmanStruct.statePredict = zeros(9,1);
 kalmanStruct.stateCurrent = zeros(9,1);
 kalmanStruct.transferMatrix = eye(9);     %state transfer matrix

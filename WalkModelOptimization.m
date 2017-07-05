@@ -1,4 +1,4 @@
-function [HMMstructOptimized, stateEstimated, stateNum] = WalkModelOptimization(data,para,methodSet)
+function [HMMstructOptimized, stateEstimated, stateNum, haltState] = WalkModelOptimization(data,para,methodSet)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% left-to-right walking model optimization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -13,7 +13,7 @@ stateNum = 4;                %state number
 observeDimension = 1;        %dimension of observation
 optPara = para.optPara;
 %% filter
-dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
+%dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
 dataFiltered = data;
 
 % size(dataFiltered)
@@ -30,7 +30,7 @@ dataFiltered = data;
 %%% comment : the kmeans is applied on all the 6 vectorial data (accel and gyro)
 %%% maybe not a good strategy: maybe kmeans shoul be applied on the same
 %%% signal as HMM?
-[HMMstruct,~] = InitializeWalkingModel(dataFiltered,stateNum,para);
+[HMMstruct,~, haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
 
 %% generate HMM model
 observeLength = length(dataFiltered);
