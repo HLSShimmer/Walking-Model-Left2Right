@@ -43,6 +43,8 @@ stationaryProbabilityKmeans(stateCurrent) = stationaryProbabilityKmeans(stateCur
 stationaryProbabilityKmeans = stationaryProbabilityKmeans./(dataLength-2*windowSize + 2);
 jointProbabilityKmeans = jointProbabilityKmeans./(dataLength-2*windowSize + 1);
 transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityKmeans.',1,stateNum);
+
+
 %% searching for the state order
 stateSeries = 1:stateNum;
 stateTransferOrder = zeros(stateNum,1);
