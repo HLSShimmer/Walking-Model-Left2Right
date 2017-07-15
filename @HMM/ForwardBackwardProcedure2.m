@@ -15,6 +15,7 @@ states = 1:N;
 %% forward
 observeProbability(1,:) = obj.GetObserveProbability(states,1);
 obj.alpha(1,:) = observeProbability(1,:).*initialStateProbability./sum(observeProbability(1,:).*initialStateProbability);
+
 for i = 2:observeLength
     forwardNextState = obj.alpha(i-1,:)*obj.HMMstruct.A;
     observeProbability(i,:) = obj.GetObserveProbability(states,i);
