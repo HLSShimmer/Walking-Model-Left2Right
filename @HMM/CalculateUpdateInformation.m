@@ -24,8 +24,7 @@ elseif strcmp(obj.HMMstruct.transitMatrixType,'LEFT2RIGHT')
     DELTA = zeros(N,1);
     for i=1:N
         ipun = mod(i,N)+1;
-        B = obj.ksai(i,ipun,:);
-        DELTA(i) = B./(sum(obj.ksai(i,i,:))+B);
+        DELTA(i) = obj.ksai(i,ipun,:)/(sum(obj.ksai(i,i,:))+obj.ksai(i,ipun,:));
         A(i,i)    = 1 - DELTA(i);
         A(i,ipun) = DELTA(i);
     end
