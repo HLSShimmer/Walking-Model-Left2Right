@@ -26,6 +26,7 @@ elseif nargin==3
     count = 0;
 end
 stateEstimated = zeros(observeLength,1);
+
 while criteriaValue <= (1-tolerance)
     disp([criteriaValue; count]) 
     
@@ -34,7 +35,7 @@ while criteriaValue <= (1-tolerance)
     
     %% calculate the update value of model
     [A,B,initialStateProbability] = obj.CalculateUpdateInformation();
-    %sum(sum(A)), A, 
+    sum(sum(A)), A, 
     %B.mu
     
     %% calculate and analyze the result, based on some criteria

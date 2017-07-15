@@ -30,7 +30,17 @@ dataFiltered = data;
 %%% comment : the kmeans is applied on all the 6 vectorial data (accel and gyro)
 %%% maybe not a good strategy: maybe kmeans shoul be applied on the same
 %%% signal as HMM?
-[HMMstruct,~, haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
+[HMMstruct,stateSequenceKmeans, haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
+
+% Data for Stephane's programs
+f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/kmeans.txt', 'w');
+if (f~=-1)   
+    fprintf(f, '1 %d\n', length(stateSequenceKmeans));
+    for i=1:length(stateSequenceKmeans),
+        fprintf(f, '%d\n', stateSequenceKmeans(i)-1);
+    end
+    fclose(f);
+end
 
 %% generate HMM model
 observeLength = length(dataFiltered);
@@ -55,15 +65,7 @@ end
 [model,HMMstructOptimized,stateEstimated,flag] = model.ModelOptimization(observeSequence);
 HMMstructOptimized.A
 
-% Data for Stephane's programs
-f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/kmeans.txt', 'w');
-if (f~=-1)   
-    fprintf(f, '1 %d\n', length(stateEstimated));
-    for i=1:length(stateEstimated),
-        fprintf(f, '%f\n', stateEstimated(i));
-    end
-    fclose(f);
-end
+
 
 %% display the result of optimization
 if flag==0

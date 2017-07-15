@@ -14,8 +14,9 @@ dataLength = size(data,1);     %% length of data, number of samples
 
 % initial classification by Kmeans
 % comment : I choose to replicate the kmeans, to avoid possible abnormal
-% convergence (the keamns with the best convergence value is selected)
-stateSequenceKmeans = kmeans(data,stateNum,'Replicates',5);
+% convergence (the kmeans with the best convergence value is selected)
+opts = statset('Display','final');
+stateSequenceKmeans = kmeans(data,stateNum,'Replicates', 15, 'start', 'uniform', 'Options', opts);
 
 % Estimation of a priori vectors and matrices from the kmeans classif
 jointProbabilityKmeans      = zeros(stateNum, stateNum);
@@ -28,9 +29,9 @@ for i=2:dataLength,
 end
 jointProbabilityKmeans   = jointProbabilityKmeans./(dataLength-1);
 transitProbabilityKmeans = jointProbabilityKmeans./repmat(stationaryProbabilityKmeans,1,stateNum);
-%stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans, 
+stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans, 
 %%sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
-%pause
+pause
 
 %% searching for the state order
 stateSequence = zeros(size(stateSequenceKmeans));
@@ -47,6 +48,7 @@ for i = 1:stateNum-1
     stateTransferOrder(i+1) = stateSeries(index);
     stateSeries(stateSeries==stateTransferOrder(i+1)) = [];     %when find a correct state order, delete the state in stateSeries
 end
+stateTransferOrder
 %% re-arrange the state according to the order, also change the joint/transit/stationary probability
 for i=1:stateNum
     stateSequence(stateSequenceKmeans==stateTransferOrder(i)) = i;
@@ -68,12 +70,12 @@ for i=1:stateNum
 end
 [~,index] = min(averageABS);
 haltState = index;
-
-%stationaryProbability, jointProbability, transitProbability, 
+stationaryProbability, jointProbability, transitProbability, 
+pause,
 
 % Correction of the a priori matrices to be a Left-Right model
-[stationaryProbability, jointProbability, transitProbability] = correctLeftRight(stationaryProbabilityKmeans, jointProbabilityKmeans, transitProbabilityKmeans);
-%stationaryProbability, jointProbability, transitProbability, pause
+[stationaryProbability, jointProbability, transitProbability] = correctLeftRight(stationaryProbability, jointProbability, transitProbability);
+stationaryProbability, jointProbability, transitProbability, pause
 %sum(stationaryProbabilityKmeans), sum(sum(jointProbabilityKmeans)), sum(sum(transitProbabilityKmeans))
 %pause
 
@@ -98,4 +100,5 @@ for i=1:stateNum
 end
 HMMstruct.initialStateProbability = stationaryProbability';
 
+sum(sum(HMMstruct.A)), HMMstruct.A,
 %HMMstruct.B.mu, pause

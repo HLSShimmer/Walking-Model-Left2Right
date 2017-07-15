@@ -15,7 +15,7 @@ stationaryP_LR = zeros(size(stationaryP_Orig));
 jointP_LR      = zeros(size(jointP_Orig));
 transitP_LR    = zeros(size(transitP_Orig));
 
-stateNumber = size(stationaryP_LR, 1);
+stateNumber = size(stationaryP_LR, 2);
 
 stationaryP_LR = stationaryP_Orig;
 for k=1:stateNumber,
