@@ -35,8 +35,8 @@ while criteriaValue <= (1-tolerance)
     
     %% calculate the update value of model
     [A,B,initialStateProbability] = obj.CalculateUpdateInformation();
-    sum(sum(A)), A, 
-    %B.mu
+    initialStateProbability, A, 
+    B.mu
     
     %% calculate and analyze the result, based on some criteria
     if nargin==2
