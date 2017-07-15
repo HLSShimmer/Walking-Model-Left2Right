@@ -7,7 +7,7 @@ clear all; close all; clc;
 %% flag of running HMM or load memory from previous time
 sensorName = 'shimmer5';
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
-%tWindows = 10001:13000;
+tWindows = 10001:13000;
 tSpan = 1:3000;
 
 if FLAG_RUN_HMM
@@ -15,9 +15,9 @@ if FLAG_RUN_HMM
     %fileName = strcat('../Data/DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
     fileName = '../Data/DataBase_WalkingFoot_Outdoor_shimmer5_5min_Disposed.mat';
     load(fileName,'footMotion', 'footStatic')
-    %sensorMotion = reduceMotionDataSize(footMotion, tWindows);
-    sensorMotion = footMotion;
-    sensorStatic = footStatic;
+    sensorMotion = reduceMotionDataSize(footMotion, tWindows);
+    %sensorMotion = footMotion;
+    %sensorStatic = footStatic;
     
     %% parameters for HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time);

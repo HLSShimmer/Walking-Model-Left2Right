@@ -41,8 +41,29 @@ model = model.SetOptPara(optPara);
 
 %% optimize model
 observeSequence = dataFiltered(:,para.selectedSignal);
+
+% Data for Stephane's programs
+f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/data.txt', 'w');
+if (f~=-1)   
+    fprintf(f, '1 %d\n', length(observeSequence));
+    for i=1:length(observeSequence),
+        fprintf(f, '%f\n', observeSequence(i));
+    end
+    fclose(f);
+end
+
 [model,HMMstructOptimized,stateEstimated,flag] = model.ModelOptimization(observeSequence);
 HMMstructOptimized.A
+
+% Data for Stephane's programs
+f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/kmeans.txt', 'w');
+if (f~=-1)   
+    fprintf(f, '1 %d\n', length(stateEstimated));
+    for i=1:length(stateEstimated),
+        fprintf(f, '%f\n', stateEstimated(i));
+    end
+    fclose(f);
+end
 
 %% display the result of optimization
 if flag==0
