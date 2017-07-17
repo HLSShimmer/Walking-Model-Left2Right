@@ -6,7 +6,7 @@
 clear all; close all; clc;
 
 %% flag of running HMM or load memory from previous time
-sensorName = 'shimmer4_8min';
+sensorName = 'shimmer1_4min';
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 tWindows = 10001:13000;
 tSpan = 1:3000;
@@ -22,8 +22,8 @@ if FLAG_RUN_HMM,
     %% load data
     load(fileName,'footMotion', 'footStatic')
     sensorStatic = footStatic;
-    %sensorMotion = reduceMotionDataSize(footMotion, tWindows);
-    sensorMotion = footMotion;
+    sensorMotion = reduceMotionDataSize(footMotion, tWindows);
+    %sensorMotion = footMotion;
 
     %% parameters for HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time) ;
@@ -199,7 +199,7 @@ plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps')
 
 figure(8)
-tSpan = 11604:12683;
+%tSpan = 11604:12683;
 subplot(311)
 area(tSpan,motionAccelSeries(tSpan,3))
 title('motion Accel Z')
@@ -230,5 +230,4 @@ ylabel('magnetic Y')
 subplot(313)
 plot(magnetiInReference(:,3))
 ylabel('magnetic Z')
-
-%print('-dpng','-r300',[figName, '_fig5Steph.png'])
+print('-dpng','-r300',[figName, '_fig11.png'])
