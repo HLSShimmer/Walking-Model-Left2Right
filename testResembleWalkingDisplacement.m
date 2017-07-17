@@ -4,7 +4,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;close all;clc;
 
-
 %% flag of running HMM or load memory from previous time
 sensorName = 'shimmer5';
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
@@ -18,8 +17,8 @@ if FLAG_RUN_HMM,
     fileName = '../Data/DataBase_WalkingFoot_Outdoor_shimmer5_5min_Disposed.mat';
     load(fileName,'footMotion', 'footStatic')
     sensorStatic = footStatic;
-    %sensorMotion = reduceMotionDataSize(footMotion, tWindows);
-    sensorMotion = footMotion;
+    sensorMotion = reduceMotionDataSize(footMotion, tWindows);
+    %sensorMotion = footMotion;
 
     %% parameters for HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time) ;
@@ -34,8 +33,8 @@ else
     fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
     load(fileName)
 end
+
 %% draw HMM result
-%tSpan = 16000:16500;
 figure(1)
 subplot(211)
 plot(tSpan,data(tSpan,para.selectedSignal),'r')
@@ -65,6 +64,8 @@ plot(motionPositionSeries)
 legend('Displacement X','Displacement Y','Displacement Z');
 title('Displacement')
 
+figure(3)
+plot(motionPositionSeries(1,:), motionPositionSeries(2,:))
 % figure(3)
 % tSpan = 10000:19000;
 % subplot(311)
