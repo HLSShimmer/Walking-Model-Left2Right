@@ -5,15 +5,19 @@
 clear all; close all; clc;
 
 %% flag of running HMM or load memory from previous time
-sensorName = 'shimmer5';
+sensorName = 'shimmer4_8min';
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 tWindows = 10001:13000;
 tSpan = 1:3000;
 
+%fileName = ['../Data/DataBase_WalkingFoot_', sensorName, '_10min_Disposed'];
+%fileName = ['../Data/DataBase_WalkingFoot_Outdoor_', sensorName, '_5min_Disposed.mat'];
+fileName    = ['../Data/DataBase_WalkingFoot_Outdoor_20170706_', sensorName, '_Disposed'];
+figName     = ['../Data/FIG/DataBase_WalkingFoot_Outdoor_20170706_', sensorName, '_Disposed'];
+fileNameHMM = ['../Data/HMM/Outdoor_', sensorName, '_WinKmeans13'];
+
 if FLAG_RUN_HMM,
     %% load data
-    %fileName = strcat('../Data/DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
-    fileName = '../Data/DataBase_WalkingFoot_Outdoor_shimmer5_5min_Disposed.mat';
     load(fileName,'footMotion', 'footStatic')
     sensorStatic = footStatic;
     %sensorMotion = reduceMotionDataSize(footMotion, tWindows);
@@ -21,27 +25,16 @@ if FLAG_RUN_HMM,
     
     %% parameters for HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time);
+    
     %% get state sequence from HMM
     data = [sensorMotion.Accel_WideRange,sensorMotion.Gyro];
-    [HMMstruct, stateEstimated, stateNum, haltState] = WalkModelOptimization(data,para,methodSet);
-    
-    % arange the classification to fit the walking steps
-    %[haltState, stateEstimated] = arangeWalking(data, HMMstruct, stateEstimated, stateNum, para.selectedSignal);
-    % haltState
-    
-%     figure(10)
-%     plot(tSpan, stateEstimated(tSpan), 'b')
-%     pause
-    
+    [HMMstruct, stateEstimated, stateNum, haltState] = WalkModelOptimization(data,para,methodSet);  
     zeroVelocityIndex = find(stateEstimated==haltState);
-    fileName = strcat('Outdoor_',sensorName,'_WinKmeans13');
-    save(fileName);
+    
+    save(fileNameHMM);
 else
-    fileName = strcat('Outdoor_',sensorName,'_WinKmeans13');
-    load(fileName)
+    load(fileNameHMM)
 end
-
-
 
 %% draw HMM result
 figure(1)
@@ -51,6 +44,9 @@ title('Gyro X')
 subplot(212)
 plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps');
+print('-dpng','-r300',[figName, '_fig1Steph.png'])
+
+
 %% parameter setup for sensor kinematics
 ParaSetupSensorKinematics;
 %% data processing, calculate quaternion, motion accel/velocity/displacement
@@ -67,11 +63,14 @@ for i=1:3
 end
 belowZero
 aboveZero
+
+
 %% draw sensor kinematics result
 figure(2)
 plot(motionPositionSeries)
 legend('Displacement X','Displacement Y','Displacement Z');
 title('Displacement')
+print('-dpng','-r300',[figName, '_fig2Steph.png'])
 
 % figure(3)
 % tSpan = 10000:19000;
@@ -87,6 +86,7 @@ title('Displacement')
 % title('Magnetic Module')
 figure(3)
 plot(motionPositionSeries(:,1),motionPositionSeries(:,2))
+print('-dpng','-r300',[figName, '_fig3Steph.png'])
 
 figure(4)
 subplot(311)
@@ -98,6 +98,7 @@ title('Velocity Y');
 subplot(313)
 plot(motionVelocitySeries(:,3))
 title('Velocity Z');
+print('-dpng','-r300',[figName, '_fig4Steph.png'])
 
 figure(5)
 % subplot(511)
@@ -115,3 +116,4 @@ title('motion Displacement')
 subplot(414)
 plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps')
+print('-dpng','-r300',[figName, '_fig5Steph.png'])

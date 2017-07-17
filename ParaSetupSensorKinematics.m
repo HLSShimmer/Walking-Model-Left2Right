@@ -46,7 +46,8 @@ temp = zeros(size(data,1),1);
 temp(zeroVelocityIndex) = 1;
 otherValues.zeroVelocityIndex = temp;
 %kalman struct settings
-fileName = strcat('../Data/', sensorName,'_NoiseMeasurement');
+%fileName = strcat('../Data/', sensorName, '_NoiseMeasurement');
+fileName = strcat('../Data/shimmer5_NoiseMeasurement');
 load(fileName)
 kalmanStruct.statePrevious = zeros(9,1);  %??r,??v,??a 
 kalmanStruct.statePredict = zeros(9,1);
