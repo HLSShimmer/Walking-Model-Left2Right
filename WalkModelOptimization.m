@@ -1,4 +1,4 @@
-function [HMMstructOptimized, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet)
+function [HMMstructOptimized, stateEstimated, stateNum, haltState] = WalkModelOptimization(data,para,methodSet)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% left-to-right walking model optimization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7,26 +7,57 @@ function [HMMstructOptimized, stateEstimated, haltState] = WalkModelOptimization
 %methodSet              input        method settings
 %HMMstructOptimized     output       HMM struct
 %stateEstimated         output       estimated state for each sample time
-%haltState              output       the state which means zero velocity
 %% declare some values
 %HMM struct paras
 stateNum = 4;                %state number
 observeDimension = 1;        %dimension of observance
 optPara = para.optPara;
 %% filter
-dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
+
+%dataFiltered = FilterData(data,para.dt,methodSet.dataFilter,para);
+dataFiltered = data;
+
 %% generate HMM struct
-[HMMstruct,~,haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
+%%% comment : the kmeans is applied on all the 6 vectorial data (accel and gyro)
+%%% maybe not a good strategy: maybe kmeans shoul be applied on the same
+%%% signal as HMM?
+[HMMstruct,stateSequenceKmeans, haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
+
+% Data for Stephane's programs
+f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/kmeans.txt', 'w');
+if (f~=-1)   
+    fprintf(f, '1 %d\n', length(stateSequenceKmeans));
+    for i=1:length(stateSequenceKmeans),
+        fprintf(f, '%d\n', stateSequenceKmeans(i)-1);
+    end
+    fclose(f);
+end
+
 %% generate HMM model
-model = HMM();
+observeLength = length(dataFiltered);
+model = HMM(observeLength, HMMstruct.N);
 %% optimal para settings
 model = model.SetModel(HMMstruct);
 model = model.SetOptPara(optPara);
+
 %% optimize model
 observeSequence = dataFiltered(:,para.selectedSignal);
-tic
+
+% Data for Stephane's programs
+f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/data.txt', 'w');
+if (f~=-1)   
+    fprintf(f, '1 %d\n', length(observeSequence));
+    for i=1:length(observeSequence),
+        fprintf(f, '%f\n', observeSequence(i));
+    end
+    fclose(f);
+end
+
 [model,HMMstructOptimized,stateEstimated,flag] = model.ModelOptimization(observeSequence);
-toc
+HMMstructOptimized.A
+
+
+
 %% display the result of optimization
 if flag==0
     disp('Optimization finished and has reached the maximum iteration')

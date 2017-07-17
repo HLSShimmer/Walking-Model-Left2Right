@@ -3,10 +3,10 @@ function [obj,HMMstruct,stateEstimated,flag,residual] = ModelOptimization(obj,ob
 %%% model optimization function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % obj                  input&output     object
-% observeSequence      input            observe sequence¹Û²âÐòÁÐ
+% observeSequence      input            observe sequence????????
 % stateSequence        input            state sequence
 % HMMstructEstimated   output           estimated HMM model
-% residual             output           error ratio of estimation×´Ì¬¹À¼Æ´íÎóÂÊ
+% residual             output           error ratio of estimation??????????????
 % flag                 output           flag, 0:reach the max iteration, 1:error ratio below tolerance
 %% declare some variables
 obj.observeSequence = observeSequence;
@@ -15,7 +15,7 @@ N = obj.HMMstruct.N;
 M = obj.HMMstruct.M;
 residual = [];
 flag = 1;
-%% loop to optimization£¬Baum-Welch algorithm
+%% loop to optimization??Baum-Welch algorithm
 if nargin==2
     tolerance = obj.optPara.ChangingTolerance;
     criteriaValue = 0;
@@ -26,13 +26,18 @@ elseif nargin==3
     count = 0;
 end
 stateEstimated = zeros(observeLength,1);
+
 while criteriaValue <= (1-tolerance)
-% while true
+    disp([criteriaValue; count]) 
+    
     %% make forward and backward procedure
     obj = obj.ForwardBackwardProcedure2();
+    
     %% calculate the update value of model
     [A,B,initialStateProbability] = obj.CalculateUpdateInformation();
-    A
+    initialStateProbability, A, 
+    B.mu
+    
     %% calculate and analyze the result, based on some criteria
     if nargin==2
         %%if there is no ground truth of state sequence
@@ -40,7 +45,7 @@ while criteriaValue <= (1-tolerance)
         for i=1:observeLength
             [~,bestBackwardStateCurrent(i)] = max(obj.gamma(i,:));
         end
-        criteriaValue = sum(bestBackwardStateCurrent==stateEstimated)/observeLength
+        criteriaValue = sum(bestBackwardStateCurrent==stateEstimated)/observeLength;
         stateEstimated = bestBackwardStateCurrent;
     elseif nargin==3
         %%if there is ground truth of state sequence
@@ -53,11 +58,12 @@ while criteriaValue <= (1-tolerance)
         criteriaValue = correctRatio;
         residual = [residual;1 - correctRatio];
     end
+
     %% model update
     obj.HMMstruct.initialStateProbability = initialStateProbability;
     obj.HMMstruct.A = A;
     obj.HMMstruct.B = B;
-    count = count + 1
+    count = count + 1;
     if count>obj.optPara.maxIter
         break;
     end

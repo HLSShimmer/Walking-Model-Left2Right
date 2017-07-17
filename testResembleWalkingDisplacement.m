@@ -2,22 +2,24 @@
 %%% use quaternion to transfer acceleration to global frame,
 %%% and HMM to detect zero-velocity, then make the integration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clear all;close all;clc;
+
+clear all; close all; clc;
 
 %% flag of running HMM or load memory from previous time
-
-sensorName = 'shimmer5';
+sensorName = 'shimmer4_8min';
 FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
 tWindows = 10001:13000;
 tSpan = 1:3000;
 timeDuration = 4;
 
-%% flag of running HMM or load memory from previous time
+%fileName = ['../Data/DataBase_WalkingFoot_', sensorName, '_10min_Disposed'];
+%fileName = ['../Data/DataBase_WalkingFoot_Outdoor_', sensorName, '_5min_Disposed.mat'];
+fileName    = ['../Data/DataBase_WalkingFoot_Outdoor_20170706_', sensorName, '_Disposed'];
+figName     = ['../Data/FIG/DataBase_WalkingFoot_Outdoor_20170706_', sensorName, '_Disposed'];
+fileNameHMM = ['../Data/HMM/Outdoor_', sensorName, '_WinKmeans13'];
+
 if FLAG_RUN_HMM,
     %% load data
-    %fileName = strcat('../Data/DataBase_WalkingFoot_',sensorName,'_10min_Disposed');
-    fileName = strcat('DataBase_WalkingFoot_Outdoor_20170706_',sensorName,'_',num2str(timeDuration),'min_Disposed');
-
     load(fileName,'footMotion', 'footStatic')
     sensorStatic = footStatic;
     %sensorMotion = reduceMotionDataSize(footMotion, tWindows);
@@ -30,13 +32,10 @@ if FLAG_RUN_HMM,
     
     [HMMstruct, stateEstimated, haltState] = WalkModelOptimization(data,para,methodSet);
     zeroVelocityIndex = find(stateEstimated==haltState);
-    fileName = strcat('WalkingMemoryStorage_20170706_',sensorName,'_Outdoor_',num2str(timeDuration),'min_WinKmeans13');
-%     fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
-    save(fileName);
+    
+    save(fileNameHMM);
 else
-    fileName = strcat('WalkingMemoryStorage_20170706_',sensorName,'_Outdoor_',num2str(timeDuration),'min_WinKmeans13');
-%     fileName = strcat('WalkingMemoryStorage_',sensorName,'_WinKmeans13');
-    load(fileName)
+    load(fileNameHMM)
 end
 
 %% draw HMM result
@@ -46,7 +45,10 @@ plot(tSpan,data(tSpan,para.selectedSignal),'r')
 title('Gyro X')
 subplot(212)
 plot(tSpan,stateEstimated(tSpan),'b')
-title('States of Steps')
+title('States of Steps');
+print('-dpng','-r300',[figName, '_fig1Steph.png'])
+
+
 %% parameter setup for sensor kinematics
 ParaSetupSensorKinematics;
 zeroVelocityRange = [];
@@ -90,6 +92,7 @@ for i=1:3
 end
 belowZero
 aboveZero
+
 %% transfer measured magnetic to global frame
 magnetiInReference = zeros(size(motionAccelSeries));
 for i=1:size(magnetiInReference,1)
@@ -108,12 +111,14 @@ for i=1:size(zeroVelocityRange,1)
         velocityEndPoint(i,j) = sum(temp);
     end
 end
+
 %% draw sensor kinematics result
 figure(2)
 tSpan = 1000:2500;
 plot(motionPositionSeries(:,:))
 legend('Displacement X','Displacement Y','Displacement Z');
 title('Displacement')
+print('-dpng','-r300',[figName, '_fig2Steph.png'])
 
 figure(3)
 plot(motionPositionSeries(:,1), motionPositionSeries(:, 2))
@@ -130,6 +135,9 @@ plot(motionPositionSeries(:,1), motionPositionSeries(:, 2))
 % temp = sqrt(sum(footMotion.Magnetic.^2,2));
 % plot(tSpan,temp(tSpan))
 % title('Magnetic Module')
+figure(3)
+plot(motionPositionSeries(:,1),motionPositionSeries(:,2))
+print('-dpng','-r300',[figName, '_fig3Steph.png'])
 
 figure(4)
 subplot(311)
@@ -141,21 +149,19 @@ title('Velocity Y');
 subplot(313)
 plot(motionVelocitySeries(:,3))
 title('Velocity Z');
+print('-dpng','-r300',[figName, '_fig4Steph.png'])
 
 figure(5)
-subplot(511)
-plot(tSpan,data(tSpan,para.selectedSignal),'r')
-title('Gyro X')
-subplot(512)
-area(tSpan,motionAccelSeries(tSpan,1))
+subplot(411)
+plot(tSpan,motionAccelSeries(tSpan,3))
 title('motion Accel')
-subplot(513)
-plot(tSpan,motionVelocitySeries(tSpan,1))
+subplot(412)
+plot(tSpan,motionVelocitySeries(tSpan,3))
 title('motion Velocity')
-subplot(514)
-plot(tSpan,motionPositionSeries(tSpan,1))
+subplot(413)
+plot(tSpan,motionPositionSeries(tSpan,3))
 title('motion Displacement')
-subplot(515)
+subplot(414)
 plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps')
 
@@ -224,3 +230,5 @@ ylabel('magnetic Y')
 subplot(313)
 plot(magnetiInReference(:,3))
 ylabel('magnetic Z')
+
+%print('-dpng','-r300',[figName, '_fig5Steph.png'])
