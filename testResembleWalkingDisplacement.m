@@ -85,6 +85,8 @@ title('Displacement')
 % temp = sqrt(sum(footMotion.Magnetic.^2,2));
 % plot(tSpan,temp(tSpan))
 % title('Magnetic Module')
+figure(3)
+plot(motionPositionSeries(:,1),motionPositionSeries(:,2))
 
 figure(4)
 subplot(311)
