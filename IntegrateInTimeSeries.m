@@ -22,6 +22,9 @@ qInTimeSeries = zeros(dataLength,4);
 motionAccelInReferenceInTimeSeries = zeros(dataLength,3);
 motionVelocityInReferenceInTimeSeries = zeros(dataLength,3);
 motionPositionInReferenceInTimeSeries = zeros(dataLength,3);
+motionAccelInReferenceInTimeSeries_Shimmer = zeros(dataLength,3);
+motionVelocityInReferenceInTimeSeries_Shimmer = zeros(dataLength,3);
+motionPositionInReferenceInTimeSeries_Shimmer = zeros(dataLength,3);
 %% each kind of motion
 if para.motionCategories==1
     %% walk left to right, with ZUPT algorithm
@@ -31,6 +34,8 @@ if para.motionCategories==1
     insValues.motionCategories = para.motionCategories;
     insValues.dt = para.dt;
     qInTimeSeries(1,:) = qInitial.';
+    motionVelocityInReferenceInTimeSeries(1,:) = velocityInitial.';
+    motionPositionInReferenceInTimeSeries(1,:) = positionInitial.';
     qTemp = qInitial;                         %represent the quaternion of current time 
     %%loop every step and integrate to get quaternion
     for i=2:dataLength
@@ -42,12 +47,50 @@ if para.motionCategories==1
         end
         %%INS function to get accel velocity and displacement
         insValues.zeroVelocityFlag = otherValues.zeroVelocityIndex(i);
-        [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionVelocityInReferenceInTimeSeries(i-1,:).',motionPositionInReferenceInTimeSeries(i-1,:).',qTemp,gravityInReference,insValues);
+        insValues.integration = methodSet.integration;
+        if i>=4
+            if insValues.integration == 1 || insValues.integration == 2    %euler or trapz
+                [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionAccelInReferenceInTimeSeries(i-1,:).',motionVelocityInReferenceInTimeSeries(i-1,:).',motionPositionInReferenceInTimeSeries(i-1,:).',qTemp,gravityInReference,insValues);
+            elseif insValues.integration == 3                              %simpson
+                [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionAccelInReferenceInTimeSeries(i-2:i-1,:).',motionVelocityInReferenceInTimeSeries(i-2:i-1,:).',motionPositionInReferenceInTimeSeries(i-2:i-1,:).',qTemp,gravityInReference,insValues);
+            elseif insValues.integration == 4                              %RK4
+                [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionAccelInReferenceInTimeSeries(i-3:i-1,:).',motionVelocityInReferenceInTimeSeries(i-3:i-1,:).',motionPositionInReferenceInTimeSeries(i-3:i-1,:).',qTemp,gravityInReference,insValues);
+            end
+        else
+            [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionAccelInReferenceInTimeSeries(i-1,:).',motionVelocityInReferenceInTimeSeries(i-1,:).',motionPositionInReferenceInTimeSeries(i-1,:).',qTemp,gravityInReference,insValues);
+        end
         %%storage
         qInTimeSeries(i,:) = qTemp.';
         motionAccelInReferenceInTimeSeries(i,:) = motionAccel.';
         motionVelocityInReferenceInTimeSeries(i,:) = motionVelocity.';
         motionPositionInReferenceInTimeSeries(i,:) = motionPosition.';
+    end
+    
+    %%
+    load('WalkingMemoryStorage_shimmer5_Outdoor_5min_WinKmeans13.mat', 'sensorMotion')
+    qInTimeSeries_Shimmer = sensorMotion.Quat9DOF_WideRange;
+    motionVelocityInReferenceInTimeSeries_Shimmer(1,:) = velocityInitial.';
+    motionPositionInReferenceInTimeSeries_Shimmer(1,:) = positionInitial.';
+    for i=2:dataLength
+        qTemp = qInTimeSeries_Shimmer(i,:).';
+        %%INS function to get accel velocity and displacement
+        insValues.zeroVelocityFlag = otherValues.zeroVelocityIndex(i);
+        insValues.integration = methodSet.integration;
+        if i>=4
+            if insValues.integration == 1 || insValues.integration == 2    %euler or trapz
+                [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionAccelInReferenceInTimeSeries(i-1,:).',motionVelocityInReferenceInTimeSeries(i-1,:).',motionPositionInReferenceInTimeSeries(i-1,:).',qTemp,gravityInReference,insValues);
+            elseif insValues.integration == 3                              %simpson
+                [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionAccelInReferenceInTimeSeries(i-2:i-1,:).',motionVelocityInReferenceInTimeSeries(i-2:i-1,:).',motionPositionInReferenceInTimeSeries(i-2:i-1,:).',qTemp,gravityInReference,insValues);
+            elseif insValues.integration == 4                              %RK4
+                [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionAccelInReferenceInTimeSeries(i-3:i-1,:).',motionVelocityInReferenceInTimeSeries(i-3:i-1,:).',motionPositionInReferenceInTimeSeries(i-3:i-1,:).',qTemp,gravityInReference,insValues);
+            end
+        else
+            [motionAccel,motionVelocity,motionPosition,insValues] =  INSFunction(accel(i,:).',motionAccelInReferenceInTimeSeries(i-1,:).',motionVelocityInReferenceInTimeSeries(i-1,:).',motionPositionInReferenceInTimeSeries(i-1,:).',qTemp,gravityInReference,insValues);
+        end
+        %%storage
+        motionAccelInReferenceInTimeSeries_Shimmer(i,:) = motionAccel.';
+        motionVelocityInReferenceInTimeSeries_Shimmer(i,:) = motionVelocity.';
+        motionPositionInReferenceInTimeSeries_Shimmer(i,:) = motionPosition.';
     end
 end
 % %% loop every step and integrate to get quaternion

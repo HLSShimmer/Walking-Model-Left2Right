@@ -20,7 +20,7 @@ stationaryProbabilityKmeans = zeros(1,stateNum);
 stationaryProbability = zeros(1,stateNum);
 stateSequence = zeros(dataLength,1);
 %% initial classification by Kmeans
-stateSequenceKmeans = kmeans(data,stateNum);
+stateSequenceKmeans = kmeans(data,stateNum,'MaxIter',10);
 %% calculate joint/transit/stationary probability
 for i=windowSize:dataLength-windowSize
     %get the regarded current state in the window size
@@ -67,6 +67,7 @@ for i=1:stateNum
         transitProbability(i,j) = transitProbabilityKmeans(stateTransferOrder(i),stateTransferOrder(j));
     end
 end
+stateSequence = stateSequenceKmeans;
 %% calculate halt state
 averageABS =zeros(stateNum,1);
 for i=1:stateNum

@@ -14,6 +14,7 @@ if nargin==1
     %% kalman filter update
     K = kalmanStruct.P_predict*kalmanStruct.observeMatrix.' / (kalmanStruct.covarianceR + kalmanStruct.observeMatrix*kalmanStruct.P_predict*kalmanStruct.observeMatrix.');
     kalmanStruct.stateCurrent = kalmanStruct.statePredict + K*(kalmanStruct.measurement - kalmanStruct.observeMatrix*kalmanStruct.statePredict);
+%     kalmanStruct.stateCurrent =  K*kalmanStruct.measurement;
     kalmanStruct.P_current = (eye(stateNum) - K*kalmanStruct.observeMatrix)*kalmanStruct.P_predict;
     kalmanStruct.P_previous = kalmanStruct.P_current;
     return;
@@ -25,6 +26,7 @@ if flag==1
     %% kalman filter update
     K = kalmanStruct.P_predict*kalmanStruct.observeMatrix.' / (kalmanStruct.covarianceR + kalmanStruct.observeMatrix*kalmanStruct.P_predict*kalmanStruct.observeMatrix.');
     kalmanStruct.stateCurrent = kalmanStruct.statePredict + K*(kalmanStruct.measurement - kalmanStruct.observeMatrix*kalmanStruct.statePredict);
+%     kalmanStruct.stateCurrent =  K*kalmanStruct.measurement;
     kalmanStruct.P_current = (eye(stateNum) - K*kalmanStruct.observeMatrix)*kalmanStruct.P_predict;
     kalmanStruct.P_previous = kalmanStruct.P_current;
 elseif flag==0
