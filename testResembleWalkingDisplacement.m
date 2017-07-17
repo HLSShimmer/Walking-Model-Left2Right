@@ -17,8 +17,8 @@ if FLAG_RUN_HMM,
     fileName = '../Data/DataBase_WalkingFoot_Outdoor_shimmer5_5min_Disposed.mat';
     load(fileName,'footMotion', 'footStatic')
     sensorStatic = footStatic;
-    sensorMotion = reduceMotionDataSize(footMotion, tWindows);
-    %sensorMotion = footMotion;
+    %sensorMotion = reduceMotionDataSize(footMotion, tWindows);
+    sensorMotion = footMotion;
 
     %% parameters for HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time) ;

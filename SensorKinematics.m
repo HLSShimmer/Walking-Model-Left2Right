@@ -16,8 +16,8 @@ function [quatSeries,motionAccelSeries,motionVelocitySeries,motionPositionSeries
 % dataMotionFiltered                 output        filtering result of dataMotion
 
 %% extract 9DOF data from data struct, and filter data. 9 cols of [Gyro_xyz,Accel_xyz,Magnetic_xyz]
-dataMotion = [sensorMotion.Gyro/180*pi,sensorMotion.Accel_LowNoise,sensorMotion.Magnetic];
-dataStatic = [sensorStatic.Gyro/180*pi,sensorStatic.Accel_LowNoise,sensorStatic.Magnetic];
+dataMotion = [sensorMotion.Gyro/180*pi,sensorMotion.Accel_WideRange,sensorMotion.Magnetic];
+dataStatic = [sensorStatic.Gyro/180*pi,sensorStatic.Accel_WideRange,sensorStatic.Magnetic];
 dataMotionFiltered = FilterData(dataMotion,para.dt,methodSet.dataFilter,para);
 dataStaticFiltered = FilterData(dataStatic,para.dt,methodSet.dataFilter,para);
 %% Based on data when standing still, initialize quaternion and get magnetic and gravity vector in global system
