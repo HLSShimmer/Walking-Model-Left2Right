@@ -65,7 +65,7 @@ legend('Displacement X','Displacement Y','Displacement Z');
 title('Displacement')
 
 figure(3)
-plot(motionPositionSeries(1,:), motionPositionSeries(2,:))
+plot(motionPositionSeries(:,1), motionPositionSeries(:, 2))
 % figure(3)
 % tSpan = 10000:19000;
 % subplot(311)
