@@ -22,6 +22,7 @@ magneticMeasuredInReference = CoordinateTransfer(magneticMeasured,qLastTime,'b2r
 magneticMeasuredInReferenceNormalised = magneticMeasuredInReference/norm(magneticMeasuredInReference);
 magneticMeasuredInReferenceNormalised(1) = sqrt(sum(magneticMeasuredInReferenceNormalised(1:2).^2));
 magneticMeasuredInReferenceNormalised(2) = 0;
+% magneticMeasuredInReferenceNormalised = magneticInReference/norm(magneticInReference);
 magneticInBodyNormalised = magneticMeasured/norm(magneticInReference);
 % magneticInBodyNormalised = magneticMeasured/norm(magneticInReference);
 % magneticInReferenceNormalised = magneticInReference/norm(magneticInReference);
