@@ -35,7 +35,7 @@ else
     load(fileName)
 end
 %% draw HMM result
-tSpan = 16000:16500;
+%tSpan = 16000:16500;
 figure(1)
 subplot(211)
 plot(tSpan,data(tSpan,para.selectedSignal),'r')
