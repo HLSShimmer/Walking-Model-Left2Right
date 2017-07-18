@@ -6,10 +6,10 @@
 clear all; close all; clc;
 
 %% flag of running HMM or load memory from previous time
-sensorName = 'shimmer1_4min';
-FLAG_RUN_HMM = true;     %%true:running for new ; false:load memory
-tWindows = 10001:13000;
-tSpan = 1:3000;
+sensorName = 'shimmer6_4min';
+FLAG_RUN_HMM = false;     %%true:running for new ; false:load memory
+tWindows = 10001:15000;
+tSpan = 10000:11000;
 timeDuration = 4;
 
 %fileName = ['../Data/DataBase_WalkingFoot_', sensorName, '_10min_Disposed'];
@@ -22,8 +22,8 @@ if FLAG_RUN_HMM,
     %% load data
     load(fileName,'footMotion', 'footStatic')
     sensorStatic = footStatic;
-    sensorMotion = reduceMotionDataSize(footMotion, tWindows);
-    %sensorMotion = footMotion;
+%     sensorMotion = reduceMotionDataSize(footMotion, tWindows);
+    sensorMotion = footMotion;
 
     %% parameters for HMM
     [para, methodSet] = ParaSetupWalkModel(sensorMotion.time) ;
@@ -35,18 +35,18 @@ if FLAG_RUN_HMM,
     
     save(fileNameHMM);
 else
-    load(fileNameHMM)
+    load(fileNameHMM);
 end
 
 %% draw HMM result
 figure(1)
 subplot(211)
-plot(tSpan,data(tSpan,para.selectedSignal),'r')
+plot(tSpan,data(tSpan,para.selectedSignal))
 title('Gyro X')
 subplot(212)
 plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps');
-print('-dpng','-r300',[figName, '_fig1Steph.png'])
+print('-dpng','-r300',[figName, '_fig1.png'])
 
 
 %% parameter setup for sensor kinematics
@@ -114,14 +114,10 @@ end
 
 %% draw sensor kinematics result
 figure(2)
-tSpan = 1000:2500;
 plot(motionPositionSeries(:,:))
 legend('Displacement X','Displacement Y','Displacement Z');
 title('Displacement')
-print('-dpng','-r300',[figName, '_fig2Steph.png'])
-
-figure(3)
-plot(motionPositionSeries(:,1), motionPositionSeries(:, 2))
+print('-dpng','-r300',[figName, '_fig2.png'])
 
 % figure(3)
 % tSpan = 10000:19000;
@@ -137,7 +133,10 @@ plot(motionPositionSeries(:,1), motionPositionSeries(:, 2))
 % title('Magnetic Module')
 figure(3)
 plot(motionPositionSeries(:,1),motionPositionSeries(:,2))
-print('-dpng','-r300',[figName, '_fig3Steph.png'])
+axis equal
+xlabel('East')
+ylabel('North')
+print('-dpng','-r300',[figName, '_fig3.png'])
 
 figure(4)
 subplot(311)
@@ -149,21 +148,22 @@ title('Velocity Y');
 subplot(313)
 plot(motionVelocitySeries(:,3))
 title('Velocity Z');
-print('-dpng','-r300',[figName, '_fig4Steph.png'])
+print('-dpng','-r300',[figName, '_fig4.png'])
 
 figure(5)
 subplot(411)
-plot(tSpan,motionAccelSeries(tSpan,3))
+area(tSpan,motionAccelSeries(tSpan,2))
 title('motion Accel')
 subplot(412)
-plot(tSpan,motionVelocitySeries(tSpan,3))
+plot(tSpan,motionVelocitySeries(tSpan,2))
 title('motion Velocity')
 subplot(413)
-plot(tSpan,motionPositionSeries(tSpan,3))
+plot(tSpan,motionPositionSeries(tSpan,2))
 title('motion Displacement')
 subplot(414)
 plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps')
+print('-dpng','-r300',[figName, '_fig5.png'])
 
 % figure(6)
 % tSpan = 10000:15500;
@@ -181,7 +181,6 @@ title('States of Steps')
 % title('Quat3')
 
 figure(7)
-tSpan = 1000:2500;
 subplot(511)
 area(tSpan,motionAccelSeries(tSpan,1))
 title('motion Accel X')
@@ -199,7 +198,6 @@ plot(tSpan,stateEstimated(tSpan),'b')
 title('States of Steps')
 
 figure(8)
-%tSpan = 11604:12683;
 subplot(311)
 area(tSpan,motionAccelSeries(tSpan,3))
 title('motion Accel Z')
@@ -209,10 +207,7 @@ title('motion Velocity Z')
 subplot(313)
 plot(tSpan,motionPositionSeries(tSpan,3))
 title('motion Position Z')
-
-figure(9)
-plot(motionPositionSeries(:,1),motionPositionSeries(:,2))
-axis equal
+print('-dpng','-r300',[figName, '_fig8.png'])
 
 figure(10)
 plot3(magnetiInReference(:,1),magnetiInReference(:,2),magnetiInReference(:,3),'*')

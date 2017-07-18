@@ -10,7 +10,7 @@ function [obj,HMMstruct,stateEstimated,flag,residual] = ModelOptimization(obj,ob
 % flag                 output           flag, 0:reach the max iteration, 1:error ratio below tolerance
 %% declare some variables
 obj.observeSequence = observeSequence;
-observeLength = length(obj.observeSequence);
+observeLength = size(obj.observeSequence,1);
 N = obj.HMMstruct.N;
 M = obj.HMMstruct.M;
 residual = [];

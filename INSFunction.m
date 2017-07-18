@@ -11,7 +11,7 @@ function [motionAccel,motionVelocity,motionPosition,insValues] = INSFunction(acc
 %insValues                                   input            some values need to use for INS
 %motionAccel,motionVelocity,motionPosition   output           motion accel velocity displacement in global frame
 %% declare some values
-gravityInReference = [0;0;9.8];
+% gravityInReference = [0;0;9.8];
 %% calculate motion Accel, velocity displacement according to the motion categories
 if insValues.motionCategories==1             %%walk left to right, with ZUPT algorithm
     if insValues.zeroVelocityFlag==1

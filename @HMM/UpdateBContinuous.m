@@ -5,7 +5,7 @@ function Bupdated = UpdateBContinuous(obj)
 % obj          input&output    object
 % Bupdated     output          updated GMM struct
 %% declare some variables
-observeLength = length(obj.observeSequence);                %length of  observe sequence
+observeLength = size(obj.observeSequence,1);                %length of  observe sequence
 stateNum = size(obj.HMMstruct.B.mu,1);                      %state number
 gaussianDimension = size(obj.observeSequence,2);            %dimension of each gaussian distribution , i.e. the dimension of observance
 mixtureNum = obj.HMMstruct.B.mixtureNum;                    %mixture number

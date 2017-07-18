@@ -93,26 +93,3 @@ if para.motionCategories==1
 %         motionPositionInReferenceInTimeSeries_Shimmer(i,:) = motionPosition.';
 %     end
 end
-% %% loop every step and integrate to get quaternion
-% qInTimeSeries(1,:) = qInitial.';
-% qTemp = qInitial;                   %represent the quaternion of current time 
-% for i=2:dataNum
-%     %%calculate quaternion at current time
-%     if methodSet.quaternion == 1          % Madgwick
-%         qTemp = IntegrateQuat3(qTemp,gyro(i,:).',accel(i,:).',magnetic(i,:).',gravityInReference,magneticInRefernce,para);
-%     elseif methodSet.quaternion == 2      % Fourati
-%         qTemp = IntegrateQuat4(qTemp,gyro(i,:).',accel(i,:).',magnetic(i,:).',gravityInReference,magneticInRefernce,para);
-%     end
-%     qInTimeSeries(i,:) = qTemp.';
-% end
-% for i=1:dataNum
-%     %%transfer measured accel to global system
-%     motionAccelInReferenceInTimeSeries(i,:) = CoordinateTransfer(accel(i,:).',qInTimeSeries(i,:).','b2r');
-% end
-% motionAccelInReferenceInTimeSeries = motionAccelInReferenceInTimeSeries - repmat(gravityInReference.',dataNum,1);
-% %% double integration to get motion velocity & displacement
-% if methodSet.accelIntegrate == 1         % Time Domain
-%     [motionVelocityInReferenceInTimeSeries,motionPositionInReferenceInTimeSeries] = AccelIntegrate3(motionAccelInReferenceInTimeSeries,velocityInitial,positionInitial,para);
-% elseif methodSet.accelIntegrate == 3     % ZUPT
-%     [motionVelocityInReferenceInTimeSeries,motionPositionInReferenceInTimeSeries] = AccelIntegrate4(motionAccelInReferenceInTimeSeries,velocityInitial,positionInitial,para,otherValues.zeroVelocityIndex);
-% end

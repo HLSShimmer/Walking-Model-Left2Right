@@ -9,7 +9,7 @@ function obj = ForwardBackwardProcedure2(obj)
 %% declare some variables
 N = obj.HMMstruct.N;
 initialStateProbability = obj.HMMstruct.initialStateProbability;
-observeLength = length(obj.observeSequence);
+observeLength = size(obj.observeSequence,1);
 observeProbability = zeros(observeLength,N);
 states = 1:N; 
 %% forward

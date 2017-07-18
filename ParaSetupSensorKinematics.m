@@ -4,8 +4,8 @@
 % % if there exist para and methodSet, delete first
 % clear para methodSet
 % % parameters
-% para.dt = 1 / 100.51;             % sample step
-para.dt = 1 / 50.21;
+para.dt = 1 / 100.51;             % sample step
+% para.dt = 1 / 50.21;
 % TD Filter
 para.h1 = 7 * para.dt;
 para.r = 2000;
@@ -73,10 +73,10 @@ kalmanStruct.covarianceR = zeros(3, 3);
 kalmanStruct.covarianceQ(7, 7) = 0.01;
 kalmanStruct.covarianceQ(8, 8) = 0.01;
 kalmanStruct.covarianceQ(9, 9) = 0.01;
-kalmanStruct.covarianceQ(4, 4) = (sqrt(kalmanStruct.covarianceQ(7, 7)) * para.dt) ^ 2;
-kalmanStruct.covarianceQ(5, 5) = (sqrt(kalmanStruct.covarianceQ(8, 8)) * para.dt) ^ 2;
-kalmanStruct.covarianceQ(6, 6) = (sqrt(kalmanStruct.covarianceQ(9, 9)) * para.dt) ^ 2;
-kalmanStruct.covarianceR(1, 1) = 0.005;
-kalmanStruct.covarianceR(2, 2) = 0.005;
-kalmanStruct.covarianceR(3, 3) = 0.005;
+% kalmanStruct.covarianceQ(4, 4) = (sqrt(kalmanStruct.covarianceQ(7, 7)) * para.dt) ^ 2;
+% kalmanStruct.covarianceQ(5, 5) = (sqrt(kalmanStruct.covarianceQ(8, 8)) * para.dt) ^ 2;
+% kalmanStruct.covarianceQ(6, 6) = (sqrt(kalmanStruct.covarianceQ(9, 9)) * para.dt) ^ 2;
+kalmanStruct.covarianceR(1, 1) = 0.01;
+kalmanStruct.covarianceR(2, 2) = 0.01;
+kalmanStruct.covarianceR(3, 3) = 0.01;
 otherValues.kalmanStruct = kalmanStruct;

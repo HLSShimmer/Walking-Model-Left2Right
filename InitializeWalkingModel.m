@@ -1,4 +1,4 @@
-function [HMMstruct,stateSequenceKmeans, haltState] = InitializeWalkingModel(data,stateNum,para)
+function [HMMstruct,stateSequence, haltState] = InitializeWalkingModel(data,stateNum,para)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% get an initial HMM model by KMeans with the input data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,6 @@ for i=1:stateNum
         transitProbability(i,j) = transitProbabilityKmeans(stateTransferOrder(i),stateTransferOrder(j));
     end
 end
-stateSequence = stateSequenceKmeans;
 %% calculate halt state
 averageABS =zeros(stateNum,1);
 for i=1:stateNum
@@ -97,8 +96,8 @@ HMMstruct.B.sigma      = cell(stateNum,1);
 HMMstruct.B.PDF        = cell(stateNum,1);
 for i=1:stateNum
     HMMstruct.B.mu{i}    = mean(data(stateSequence==i,selectedSignal));
-    HMMstruct.B.sigma{i} = zeros(1,1,1);
-    HMMstruct.B.sigma{i}(1,1,1) = var(data(stateSequence==i,selectedSignal));
+    HMMstruct.B.sigma{i} = zeros(length(selectedSignal),length(selectedSignal),1);
+    HMMstruct.B.sigma{i}(:,:,1) = cov(data(stateSequence==i,selectedSignal));
     HMMstruct.B.PDF{i}   = gmdistribution(HMMstruct.B.mu{i},HMMstruct.B.sigma{i},HMMstruct.B.weights(i,:));
 end
 

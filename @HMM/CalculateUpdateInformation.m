@@ -9,7 +9,7 @@ function [A,B,initialStateProbability] = CalculateUpdateInformation(obj)
 %% declare some variables
 N = obj.HMMstruct.N;
 M = obj.HMMstruct.M;
-observeLength = length(obj.observeSequence);
+observeLength = size(obj.observeSequence,1);
 initialStateProbability = zeros(1,N);
 A = zeros(N,N);
 B = zeros(N,M);

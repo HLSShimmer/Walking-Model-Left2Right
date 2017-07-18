@@ -24,17 +24,17 @@ dataFiltered = data;
 [HMMstruct,stateSequenceKmeans, haltState] = InitializeWalkingModel(dataFiltered,stateNum,para);
 
 % Data for Stephane's programs
-f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/kmeans.txt', 'w');
-if (f~=-1)   
-    fprintf(f, '1 %d\n', length(stateSequenceKmeans));
-    for i=1:length(stateSequenceKmeans),
-        fprintf(f, '%d\n', stateSequenceKmeans(i)-1);
-    end
-    fclose(f);
-end
+% f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/kmeans.txt', 'w');
+% if (f~=-1)   
+%     fprintf(f, '1 %d\n', length(stateSequenceKmeans));
+%     for i=1:length(stateSequenceKmeans),
+%         fprintf(f, '%d\n', stateSequenceKmeans(i)-1);
+%     end
+%     fclose(f);
+% end
 
 %% generate HMM model
-observeLength = length(dataFiltered);
+observeLength = size(dataFiltered,1);
 model = HMM(observeLength, HMMstruct.N);
 %% optimal para settings
 model = model.SetModel(HMMstruct);
@@ -43,20 +43,18 @@ model = model.SetOptPara(optPara);
 %% optimize model
 observeSequence = dataFiltered(:,para.selectedSignal);
 
-% Data for Stephane's programs
-f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/data.txt', 'w');
-if (f~=-1)   
-    fprintf(f, '1 %d\n', length(observeSequence));
-    for i=1:length(observeSequence),
-        fprintf(f, '%f\n', observeSequence(i));
-    end
-    fclose(f);
-end
+% % Data for Stephane's programs
+% f = fopen('/Users/MacBook_Derrode/Documents/temp/testHaoyu/data.txt', 'w');
+% if (f~=-1)   
+%     fprintf(f, '1 %d\n', length(observeSequence));
+%     for i=1:length(observeSequence),
+%         fprintf(f, '%f\n', observeSequence(i));
+%     end
+%     fclose(f);
+% end
 
 [model,HMMstructOptimized,stateEstimated,flag] = model.ModelOptimization(observeSequence);
 HMMstructOptimized.A
-
-
 
 %% display the result of optimization
 if flag==0
